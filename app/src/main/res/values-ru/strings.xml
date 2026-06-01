@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_home">Главная</string>
+    <string name="nav_stats">Статистика</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="add_expense">Добавить расход</string>
+    <string name="screen_home">Экран: Главная</string>
+    <string name="screen_stats">Экран: Статистика</string>
+    <string name="screen_settings">Экран: Настройки</string>
+    <string name="nav_history">История</string>
+    <string name="screen_history">Экран: История</string>
+    <string name="total_balance">Общий баланс</string>
+    <string name="income">Доход</string>
+    <string name="expenses">Расходы</string>
+    <string name="recent_transactions">Последние транзакции</string>
+    <string name="see_all">Посмотреть все</string>
+    <string name="save">Сохранить</string>
+    <string name="enter_amount">Введите сумму</string>
+    <string name="category">Категория</string>
+    <string name="description">Описание (необязательно)</string>
+</resources>

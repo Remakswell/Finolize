@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_home">Головна</string>
+    <string name="nav_stats">Статистика</string>
+    <string name="nav_settings">Налаштування</string>
+    <string name="add_expense">Додати витрату</string>
+    <string name="screen_home">Екран: Головна</string>
+    <string name="screen_stats">Екран: Статистика</string>
+    <string name="screen_settings">Екран: Налаштування</string>
+    <string name="nav_history">Історія</string>
+    <string name="screen_history">Екран: Історія</string>
+    <string name="total_balance">Загальний баланс</string>
+    <string name="income">Дохід</string>
+    <string name="expenses">Витрати</string>
+    <string name="recent_transactions">Останні транзакції</string>
+    <string name="see_all">Переглянути всі</string>
+    <string name="save">Зберегти</string>
+    <string name="enter_amount">Введіть суму</string>
+    <string name="category">Категорія</string>
+    <string name="description">Опис (необов\'язково)</string>
+
+</resources>
