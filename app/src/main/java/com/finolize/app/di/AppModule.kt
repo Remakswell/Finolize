@@ -3,6 +3,7 @@ package com.finolize.app.di
 import android.content.Context
 import androidx.room.Room
 import com.finolize.app.data.local.database.FinolizeDatabase
+import com.finolize.app.data.local.prefs.PreferenceManager
 import com.finolize.app.data.repository.ExpenseRepositoryImpl
 import com.finolize.app.domain.repository.ExpenseRepository
 import dagger.Module
@@ -31,5 +32,11 @@ object AppModule {
     @Singleton
     fun provideRepository(db: FinolizeDatabase): ExpenseRepository {
         return ExpenseRepositoryImpl(db.expenseDao())
+    }
+
+    @Provides
+    @Singleton
+    fun providePreferenceManager(@ApplicationContext context: Context): PreferenceManager {
+        return PreferenceManager(context)
     }
 }

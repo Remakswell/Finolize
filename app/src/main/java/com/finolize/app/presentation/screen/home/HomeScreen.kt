@@ -71,7 +71,7 @@ fun HomeScreen(
                 Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(stringResource(R.string.expenses).uppercase(), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f))
                     Spacer(Modifier.height(8.dp))
-                    Text("$${String.format("%.2f", state.totalBalance)}", style = MaterialTheme.typography.displayMedium, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onErrorContainer)
+                    Text("${state.currency}${String.format("%.2f", state.totalBalance)}", style = MaterialTheme.typography.displayMedium, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onErrorContainer)
                 }
             }
             Spacer(Modifier.height(32.dp))
@@ -103,7 +103,8 @@ fun HomeScreen(
                             categoryName = expense.category,
                             amount = String.format("%.2f", expense.amount),
                             timestamp = expense.timestamp,
-                            description = expense.description
+                            description = expense.description,
+                            currency = state.currency
                         )
                     }
                 }

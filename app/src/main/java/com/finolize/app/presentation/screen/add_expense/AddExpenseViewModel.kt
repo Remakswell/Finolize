@@ -8,7 +8,9 @@ import com.finolize.app.domain.model.CategoryList
 import com.finolize.app.domain.usecase.AddExpenseUseCase
 import com.finolize.app.domain.usecase.GetExpenseByIdUseCase
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.setValue
+import com.finolize.app.data.local.prefs.PreferenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,16 +18,18 @@ import javax.inject.Inject
 @HiltViewModel
 class AddExpenseViewModel @Inject constructor(
     private val addExpenseUseCase: AddExpenseUseCase,
-    private val getExpenseByIdUseCase: GetExpenseByIdUseCase
+    private val getExpenseByIdUseCase: GetExpenseByIdUseCase,
+    private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
     // Состояния для полей ввода (переносим из Screen во ViewModel)
     var amount by mutableStateOf("")
     var description by mutableStateOf("")
     var selectedCategoryName by mutableStateOf(CategoryList.categories[0].name)
+    var selectedTimestamp by mutableLongStateOf(System.currentTimeMillis())
     var isEditing by mutableStateOf(false)
     private var editingId: Long? = null
-    private var originalTimestamp: Long? = null
+    val currency = preferenceManager.getCurrency()
 
     fun loadExpense(id: Long) {
         if (id == -1L || isEditing) return // Если уже загрузили или ID пустой
@@ -36,7 +40,7 @@ class AddExpenseViewModel @Inject constructor(
                 amount = expense.amount.toString()
                 description = expense.description
                 selectedCategoryName = expense.category
-                originalTimestamp = expense.timestamp
+                selectedTimestamp = expense.timestamp
             }
         }
     }
@@ -52,7 +56,7 @@ class AddExpenseViewModel @Inject constructor(
                 amount = amountDouble,
                 category = selectedCategoryName,
                 description = description,
-                timestamp = originalTimestamp ?: System.currentTimeMillis()
+                timestamp = selectedTimestamp
             )
             addExpenseUseCase(expense)
         }

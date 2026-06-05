@@ -34,6 +34,7 @@ fun ExpenseItem(
     amount: String,
     timestamp: Long,
     description: String,
+    currency: String,
     modifier: Modifier = Modifier
 ) {
     val category = CategoryList.getCategoryByName(categoryName)
@@ -90,7 +91,7 @@ fun ExpenseItem(
 
             // Сумма
             Text(
-                text = "-$amount",
+                text = "-$currency$amount",
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.error
