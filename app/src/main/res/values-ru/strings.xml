@@ -18,4 +18,8 @@
     <string name="enter_amount">Введите сумму</string>
     <string name="category">Категория</string>
     <string name="description">Описание (необязательно)</string>
+    <string name="delete_expense_title">Удалить расход?</string>
+    <string name="delete_expense_message">Вы уверены, что хотите удалить эту запись?</string>
+    <string name="delete">Удалить</string>
+    <string name="cancel">Отмена</string>
 </resources>
