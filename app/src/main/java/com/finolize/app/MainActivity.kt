@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
         ) { innerPadding ->
             NavHost(navController, Screen.Home.route, Modifier.fillMaxSize()) {
                 composable(Screen.Home.route) { HomeScreen(innerPadding, navController) }
-                composable(Screen.History.route) { HistoryScreen(innerPadding) }
+                composable(Screen.History.route) { HistoryScreen(innerPadding, navController) }
                 composable(Screen.Stats.route) { StatsScreen(innerPadding) }
                 composable(Screen.Settings.route) { SettingsScreen(innerPadding) }
                 composable(

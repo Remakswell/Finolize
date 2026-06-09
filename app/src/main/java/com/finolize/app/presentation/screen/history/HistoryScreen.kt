@@ -1,19 +1,164 @@
 package com.finolize.app.presentation.screen.history
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.finolize.app.R
+import com.finolize.app.data.local.entity.ExpenseEntity
+import com.finolize.app.domain.model.CategoryList
+import com.finolize.app.presentation.components.DeleteDialog
+import com.finolize.app.presentation.components.ExpenseItem
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen(paddingValues: PaddingValues) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) { Text(text = stringResource(id = R.string.screen_history)) }
+fun HistoryScreen(
+    paddingValues: PaddingValues,
+    navController: NavHostController,
+    viewModel: HistoryViewModel = hiltViewModel()
+) {
+    val state by viewModel.state.collectAsState()
+    var expenseToDelete by remember { mutableStateOf<ExpenseEntity?>(null) }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+    ) {
+        // 1. Заголовок
+        Text(
+            text = stringResource(R.string.nav_history),
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(16.dp)
+        )
+
+        // 2. Поле Поиска
+        OutlinedTextField(
+            value = state.searchQuery,
+            onValueChange = { viewModel.onSearchQueryChange(it) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            placeholder = { Text("Search transactions...") },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            shape = RoundedCornerShape(12.dp),
+            singleLine = true
+        )
+
+        // 3. Фильтр по категориям
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(CategoryList.categories) { category ->
+                FilterChip(
+                    selected = state.selectedCategory == category.name,
+                    onClick = { viewModel.onCategorySelect(category.name) },
+                    label = { Text(category.name) }
+                )
+            }
+        }
+
+        // 4. Список транзакций с группировкой и удалением
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            if (state.groupedExpenses.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier.fillParentMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "No records found", color = Color.Gray)
+                    }
+                }
+            } else {
+                state.groupedExpenses.forEach { (month, expenses) ->
+                    item {
+                        Text(
+                            text = month,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(vertical = 12.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    items(items = expenses, key = { it.id }) { expense ->
+                        val dismissState = rememberSwipeToDismissBoxState(
+                            confirmValueChange = {
+                                if (it == SwipeToDismissBoxValue.EndToStart) {
+                                    expenseToDelete = expense
+                                    false
+                                } else false
+                            }
+                        )
+
+                        SwipeToDismissBox(
+                            state = dismissState,
+                            enableDismissFromStartToEnd = false,
+                            backgroundContent = {
+                                val color =
+                                    if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart)
+                                        MaterialTheme.colorScheme.errorContainer else Color.Transparent
+                                Box(
+                                    Modifier
+                                        .fillMaxSize()
+                                        .background(color, RoundedCornerShape(12.dp))
+                                        .padding(horizontal = 20.dp),
+                                    contentAlignment = Alignment.CenterEnd
+                                ) {
+                                    Icon(
+                                        Icons.Default.Delete,
+                                        null,
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
+                        ) {
+                            ExpenseItem(
+                                modifier = Modifier.clickable {
+                                    navController.navigate("add_expense?expenseId=${expense.id}")
+                                },
+                                categoryName = expense.category,
+                                amount = String.format("%.2f", expense.amount),
+                                timestamp = expense.timestamp,
+                                description = expense.description,
+                                currency = state.currency
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Диалог подтверждения удаления
+    if (expenseToDelete != null) {
+        DeleteDialog(
+            onConfirm = {
+                expenseToDelete?.let {
+                    viewModel.deleteExpense(it)
+                }
+                expenseToDelete = null
+            },
+            onDismiss = { expenseToDelete = null })
+    }
 }
