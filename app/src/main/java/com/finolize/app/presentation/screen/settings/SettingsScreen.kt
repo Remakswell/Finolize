@@ -28,8 +28,8 @@ fun SettingsScreen(
     ) {
         Text(
             text = stringResource(R.string.nav_settings),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Black,
             modifier = Modifier.padding(bottom = 24.dp)
         )
 

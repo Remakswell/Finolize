@@ -41,8 +41,8 @@ fun StatsScreen(
         // 1. Заголовок
         Text(
             text = stringResource(R.string.nav_stats),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Black,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 

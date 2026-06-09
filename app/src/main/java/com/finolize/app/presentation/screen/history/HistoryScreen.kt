@@ -43,8 +43,8 @@ fun HistoryScreen(
         // 1. Заголовок
         Text(
             text = stringResource(R.string.nav_history),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Black,
             modifier = Modifier.padding(16.dp)
         )
 
