@@ -12,16 +12,16 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-enum class StatsPeriod { WEEK, MONTH, YEAR, ALL }
+enum class StatsPeriod { TODAY, WEEK, MONTH, YEAR, ALL }
 
 data class StatsUiState(
     val stats: List<CategoryStat> = emptyList(),
+    val totalAmount: Double = 0.0,
     val isEmpty: Boolean = true,
-    val selectedPeriod: StatsPeriod = StatsPeriod.MONTH,
+    val selectedPeriod: StatsPeriod = StatsPeriod.TODAY,
     val currency: String = "$"
 )
 
@@ -31,7 +31,7 @@ class StatsViewModel @Inject constructor(
     private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
-    private val _selectedPeriod = MutableStateFlow(StatsPeriod.MONTH)
+    private val _selectedPeriod = MutableStateFlow(StatsPeriod.TODAY)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val state: StateFlow<StatsUiState> = combine(
@@ -41,6 +41,7 @@ class StatsViewModel @Inject constructor(
     ) { stats, currency ->
         StatsUiState(
             stats = stats,
+            totalAmount = stats.sumOf { it.amount },
             isEmpty = stats.isEmpty(),
             selectedPeriod = _selectedPeriod.value,
             currency = currency

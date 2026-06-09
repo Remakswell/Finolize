@@ -79,11 +79,30 @@ fun StatsScreen(
                 Text(text = "No expenses for this period", color = Color.Gray)
             }
         } else {
-            // 3. График
-            PieChart(
-                stats = state.stats,
-                modifier = Modifier.padding(vertical = 24.dp)
-            )
+            // 3. График с суммой в центре
+            Box(
+                contentAlignment = Alignment.Center, // Центрируем всё внутри
+                modifier = Modifier.padding(vertical = 32.dp)
+            ) {
+                PieChart(
+                    stats = state.stats,
+                    modifier = Modifier.size(220.dp) // Чуть увеличим
+                )
+
+                // ВЫВОДИМ СУММУ В ЦЕНТРЕ
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Total",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color.Gray
+                    )
+                    Text(
+                        text = "${state.currency}${String.format("%.2f", state.totalAmount)}",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Black
+                    )
+                }
+            }
 
             // 4. Список категорий
             LazyColumn(

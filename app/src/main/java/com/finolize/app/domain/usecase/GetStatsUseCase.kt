@@ -51,6 +51,13 @@ class GetStatsUseCase @Inject constructor(
     private fun calculateStartTime(period: StatsPeriod): Long {
         val calendar = Calendar.getInstance()
         when (period) {
+            StatsPeriod.TODAY -> {
+                // Сбрасываем часы, минуты, секунды и миллисекунды на ноль
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+            }
             StatsPeriod.WEEK -> calendar.add(Calendar.DAY_OF_YEAR, -7)
             StatsPeriod.MONTH -> calendar.add(Calendar.MONTH, -1)
             StatsPeriod.YEAR -> calendar.add(Calendar.YEAR, -1)
