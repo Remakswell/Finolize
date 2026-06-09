@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
                 }
             },
             floatingActionButton = {
-                AnimatedVisibility(visible = !isAddOrEditScreen, enter = scaleIn(), exit = scaleOut()) {
+                AnimatedVisibility(visible = currentRoute == Screen.Home.route, enter = scaleIn(), exit = scaleOut()) {
                     FloatingActionButton(
                         onClick = { navController.navigate("add_expense") },
                         containerColor = MaterialTheme.colorScheme.primary,
