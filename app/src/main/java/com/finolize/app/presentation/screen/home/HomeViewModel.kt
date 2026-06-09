@@ -1,9 +1,8 @@
 package com.finolize.app.presentation.screen.home
 
-import androidx.activity.result.launch
+import android.text.format.DateUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.finolize.app.core.utils.toGroupHeader
 import com.finolize.app.data.local.entity.ExpenseEntity
 import com.finolize.app.data.local.prefs.PreferenceManager
 import com.finolize.app.domain.usecase.DeleteExpenseUseCase
@@ -12,13 +11,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class HomeUiState(
-    val groupedExpenses: Map<String, List<ExpenseEntity>> = emptyMap(),
+    val expenses: List<ExpenseEntity> = emptyList(),
     val totalBalance: Double = 0.0,
     val currency: String = "$"
 )
@@ -33,9 +31,13 @@ class HomeViewModel @Inject constructor(
     // Подписываемся на изменения в базе данных
     val state: StateFlow<HomeUiState> = combine( getExpensesUseCase(),
         preferenceManager.currencyFlow) { expenses, currency ->
+
+        val todayExpenses = expenses.filter {
+            DateUtils.isToday(it.timestamp)
+        }
             HomeUiState(
-                groupedExpenses = expenses.groupBy { it.timestamp.toGroupHeader() },
-                totalBalance = expenses.sumOf { it.amount },
+                expenses = todayExpenses,
+                totalBalance = todayExpenses.sumOf { it.amount },
                 currency = currency
             )
         }

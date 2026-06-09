@@ -22,5 +22,9 @@
     <string name="delete_expense_message">Are you sure you want to delete this record?</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="todays_expenses">Today\'s Expenses</string>
+    <string name="no_expenses_today">No expenses today</string>
+    <string name="today">Today</string>
+    <string name="today_history">Today\'s History</string>
 
 </resources>

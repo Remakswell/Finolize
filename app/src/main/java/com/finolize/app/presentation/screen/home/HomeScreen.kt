@@ -18,17 +18,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxDefaults.positionalThreshold
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -39,16 +36,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.finolize.app.R
 import com.finolize.app.data.local.entity.ExpenseEntity
+import com.finolize.app.presentation.components.DeleteDialog
 import com.finolize.app.presentation.components.ExpenseItem
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,8 +58,10 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    val currentMonth = remember { SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(Date()) }
     var expenseToDelete by remember { mutableStateOf<ExpenseEntity?>(null) }
+    val fullDate = remember {
+        SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date())
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -69,84 +70,128 @@ fun HomeScreen(
             .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
+        // 1. Заголовок "Сегодня" + дата
         item {
-            Text(currentMonth.replaceFirstChar { it.uppercase() }, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 24.dp))
+            Column(modifier = Modifier.padding(vertical = 16.dp)) {
+                Text(
+                    text = stringResource(R.string.today),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Black
+                )
+                Text(
+                    text = fullDate.replaceFirstChar { it.uppercase() },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+            }
         }
 
+        // 2. Карточка расходов (за сегодня)
         item {
-            Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(28.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+            ) {
                 Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(R.string.expenses).uppercase(), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f))
+                    Text(
+                        text = stringResource(R.string.todays_expenses).uppercase(),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f)
+                    )
                     Spacer(Modifier.height(8.dp))
-                    Text("${state.currency}${String.format("%.2f", state.totalBalance)}", style = MaterialTheme.typography.displayMedium, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onErrorContainer)
+                    Text(
+                        text = "${state.currency}${String.format("%.2f", state.totalBalance)}",
+                        style = MaterialTheme.typography.displayMedium,
+                        fontWeight = FontWeight.Black,
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
                 }
             }
             Spacer(Modifier.height(32.dp))
         }
 
-        if (state.groupedExpenses.isEmpty()) {
-            item { Box(Modifier
-                .fillMaxWidth()
-                .padding(top = 40.dp), contentAlignment = Alignment.Center) { Text("No expenses recorded", color = Color.Gray) } }
-        } else {
-            state.groupedExpenses.forEach { (date, expenses) ->
-                item { Text(date, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)) }
+        // 3. Заголовок "История за сегодня"
+        item {
+            Text(
+                text = stringResource(R.string.today_history),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+            )
+        }
 
-                items(items = expenses, key = { it.id }) { expense ->
-                    val dismissState = rememberSwipeToDismissBoxState(confirmValueChange = {
+        // 4. Список трат за сегодня или заглушка
+        if (state.expenses.isEmpty()) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 40.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "☕", fontSize = 48.sp)
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        text = stringResource(R.string.no_expenses_today),
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        } else {
+            items(items = state.expenses, key = { it.id }) { expense ->
+                val dismissState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = {
                         if (it == SwipeToDismissBoxValue.EndToStart) {
                             expenseToDelete = expense
                             false
                         } else false
-                    })
+                    }
+                )
 
-                    SwipeToDismissBox(
-                        state = dismissState,
-                        enableDismissFromStartToEnd = false,
-                        backgroundContent = {
-                            val color = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) MaterialTheme.colorScheme.errorContainer else Color.Transparent
-                            Box(Modifier
+                SwipeToDismissBox(
+                    state = dismissState,
+                    enableDismissFromStartToEnd = false,
+                    backgroundContent = {
+                        val color = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart)
+                            MaterialTheme.colorScheme.errorContainer else Color.Transparent
+                        Box(
+                            Modifier
                                 .fillMaxSize()
                                 .background(color, RoundedCornerShape(12.dp))
-                                .padding(horizontal = 20.dp), contentAlignment = Alignment.CenterEnd) {
-                                Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error)
-                            }
+                                .padding(horizontal = 20.dp),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error)
                         }
-                    ) {
-                        ExpenseItem(
-                            modifier = Modifier.clickable { navController.navigate("add_expense?expenseId=${expense.id}") },
-                            categoryName = expense.category,
-                            amount = String.format("%.2f", expense.amount),
-                            timestamp = expense.timestamp,
-                            description = expense.description,
-                            currency = state.currency
-                        )
                     }
+                ) {
+                    ExpenseItem(
+                        modifier = Modifier.clickable { navController.navigate("add_expense?expenseId=${expense.id}") },
+                        categoryName = expense.category,
+                        amount = String.format("%.2f", expense.amount),
+                        timestamp = expense.timestamp,
+                        description = expense.description,
+                        currency = state.currency
+                    )
                 }
             }
         }
     }
-    // ДИАЛОГ ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ
+
+    // Диалог удаления
     if (expenseToDelete != null) {
-        AlertDialog(
-            onDismissRequest = { expenseToDelete = null },
-            title = { Text(stringResource(R.string.delete_expense_title)) },
-            text = { Text(stringResource(R.string.delete_expense_message)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        expenseToDelete?.let { viewModel.deleteExpense(it) }
-                        expenseToDelete = null
-                    }
-                ) {
-                    Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
+        DeleteDialog(
+            onConfirm = {
+                expenseToDelete?.let {
+                    viewModel.deleteExpense(it)
                 }
+                expenseToDelete = null
             },
-            dismissButton = {
-                TextButton(onClick = { expenseToDelete = null }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
-        )
+            onDismiss = { expenseToDelete = null })
     }
 }

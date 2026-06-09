@@ -22,5 +22,9 @@
     <string name="delete_expense_message">Ви впевнені, що хочете видалити цей запис?</string>
     <string name="delete">Видалити</string>
     <string name="cancel">Скасувати</string>
+    <string name="todays_expenses">Витрати за сьогодні</string>
+    <string name="no_expenses_today">Сьогодні витрат ще немає</string>
+    <string name="today">Сьогодні</string>
+    <string name="today_history">Історія за сьогодні</string>
 
 </resources>
