@@ -4,14 +4,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.finolize.app.data.local.entity.ExpenseEntity
-import com.finolize.app.domain.model.CategoryList
 import com.finolize.app.domain.usecase.AddExpenseUseCase
 import com.finolize.app.domain.usecase.GetExpenseByIdUseCase
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.setValue
 import com.finolize.app.data.local.prefs.PreferenceManager
+import com.finolize.app.domain.repository.ExpenseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,16 +21,19 @@ import javax.inject.Inject
 class AddExpenseViewModel @Inject constructor(
     private val addExpenseUseCase: AddExpenseUseCase,
     private val getExpenseByIdUseCase: GetExpenseByIdUseCase,
+    private val repository: ExpenseRepository,
     private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
     // Состояния для полей ввода (переносим из Screen во ViewModel)
     var amount by mutableStateOf("")
     var description by mutableStateOf("")
-    var selectedCategoryName by mutableStateOf(CategoryList.categories[0].name)
+    var selectedCategoryName by mutableStateOf("Food")
     var selectedTimestamp by mutableLongStateOf(System.currentTimeMillis())
     var isEditing by mutableStateOf(false)
     private var editingId: Long? = null
+    val categories = repository.getAllCategories()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val currency = preferenceManager.getCurrency()
 
     fun loadExpense(id: Long) {

@@ -21,23 +21,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.finolize.app.core.utils.toFormattedDate
-import com.finolize.app.domain.model.CategoryList
 
 @Composable
 fun ExpenseItem(
     categoryName: String,
+    categoryIcon: ImageVector,
+    categoryColor: Color,
     amount: String,
     timestamp: Long,
     description: String,
     currency: String,
     modifier: Modifier = Modifier
 ) {
-    val category = CategoryList.getCategoryByName(categoryName)
+
+    val context = LocalContext.current
 
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -54,10 +58,10 @@ fun ExpenseItem(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(category.color.copy(alpha = 0.2f)),
+                    .background(categoryColor.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(category.icon, contentDescription = null, tint = category.color)
+                Icon(categoryIcon, contentDescription = null, tint = categoryColor)
             }
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -65,7 +69,7 @@ fun ExpenseItem(
             Column(modifier = Modifier.weight(1f)) {
                 // 1. Категория
                 Text(
-                    text = category.name,
+                    text = categoryName,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
                 )
@@ -83,7 +87,7 @@ fun ExpenseItem(
 
                 // 3. Дата
                 Text(
-                    text = timestamp.toFormattedDate(),
+                    text = timestamp.toFormattedDate(context),
                     color = Color.Gray,
                     fontSize = 12.sp
                 )

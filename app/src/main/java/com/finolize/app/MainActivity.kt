@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -24,19 +25,31 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.finolize.app.domain.repository.ExpenseRepository
 import com.finolize.app.presentation.components.FinolizeBottomBar
 import com.finolize.app.presentation.components.Screen
 import com.finolize.app.presentation.screen.add_expense.AddExpenseScreen
+import com.finolize.app.presentation.screen.categories.AddCategoryScreen
+import com.finolize.app.presentation.screen.categories.ManageCategoriesScreen
 import com.finolize.app.presentation.screen.history.HistoryScreen
 import com.finolize.app.presentation.screen.home.HomeScreen
 import com.finolize.app.presentation.screen.settings.SettingsScreen
 import com.finolize.app.presentation.screen.stats.StatsScreen
 import com.finolize.app.ui.theme.FinolizeTheme
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject lateinit var repository: ExpenseRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        lifecycleScope.launch {
+            repository.prefillCategories(applicationContext)
+        }
         enableEdgeToEdge()
         setContent {
             FinolizeTheme {
@@ -50,12 +63,14 @@ class MainActivity : ComponentActivity() {
     fun FinolizeAppContent(navController: NavHostController) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
-        val isAddOrEditScreen = currentRoute?.startsWith("add_expense") == true
+        val isFullScreen = currentRoute?.startsWith("add_expense") == true ||
+                currentRoute?.startsWith("add_category") == true ||
+                currentRoute == "manage_categories"
 
         Scaffold(
             bottomBar = {
                 AnimatedVisibility(
-                    visible = !isAddOrEditScreen,
+                    visible = !isFullScreen,
                     enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
                     exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
                 ) {
@@ -69,7 +84,7 @@ class MainActivity : ComponentActivity() {
                 }
             },
             floatingActionButton = {
-                AnimatedVisibility(visible = currentRoute == Screen.Home.route, enter = scaleIn(), exit = scaleOut()) {
+                AnimatedVisibility(visible = !isFullScreen && currentRoute == Screen.Home.route, enter = scaleIn(), exit = scaleOut()) {
                     FloatingActionButton(
                         onClick = { navController.navigate("add_expense") },
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -82,13 +97,33 @@ class MainActivity : ComponentActivity() {
                 composable(Screen.Home.route) { HomeScreen(innerPadding, navController) }
                 composable(Screen.History.route) { HistoryScreen(innerPadding, navController) }
                 composable(Screen.Stats.route) { StatsScreen(innerPadding) }
-                composable(Screen.Settings.route) { SettingsScreen(innerPadding) }
+                composable(Screen.Settings.route) {
+                    SettingsScreen(
+                        paddingValues = innerPadding,
+                        onNavigateToManageCategories = { navController.navigate("manage_categories") }
+                    )
+                }
                 composable(
                     route = Screen.AddExpense.route,
-                    arguments = listOf(navArgument("expenseId") { type = NavType.LongType; defaultValue = -1L })
+                    arguments = listOf(navArgument("expenseId") {
+                        type = NavType.LongType; defaultValue = -1L
+                    })
                 ) { backStackEntry ->
                     val id = backStackEntry.arguments?.getLong("expenseId") ?: -1L
-                    AddExpenseScreen(id, { navController.popBackStack() })
+                    AddExpenseScreen(
+                        expenseId = id,
+                        onNavigateBack = { navController.popBackStack() },
+                        navController = navController
+                    )
+                }
+                composable("add_category") {
+                    AddCategoryScreen(onNavigateBack = { navController.popBackStack() })
+                }
+                composable("manage_categories") {
+                    ManageCategoriesScreen(
+                        onNavigateBack = { navController.popBackStack() },
+                        onNavigateToAddCategory = { navController.navigate("add_category") }
+                    )
                 }
             }
         }

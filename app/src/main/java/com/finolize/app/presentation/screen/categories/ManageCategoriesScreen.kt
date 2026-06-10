@@ -1,0 +1,145 @@
+package com.finolize.app.presentation.screen.categories
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.finolize.app.R
+import com.finolize.app.core.utils.IconMapper
+import com.finolize.app.data.local.entity.CategoryEntity
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ManageCategoriesScreen(
+    onNavigateBack: () -> Unit,
+    onNavigateToAddCategory: () -> Unit,
+    viewModel: CategoriesViewModel = hiltViewModel()
+) {
+    val categories by viewModel.categories.collectAsState()
+    var categoryToDelete by remember { mutableStateOf<CategoryEntity?>(null) }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.manage_categories)) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, null)
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = onNavigateToAddCategory) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
+            }
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(categories) { category ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    Color(android.graphics.Color.parseColor(category.colorHex)).copy(
+                                        alpha = 0.2f
+                                    )
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                IconMapper.getIconByName(category.iconName),
+                                null,
+                                tint = Color(android.graphics.Color.parseColor(category.colorHex))
+                            )
+                        }
+
+                        Text(
+                            text = category.name,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 16.dp),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium
+                        )
+
+                        // ЛОГИКА УДАЛЕНИЯ / ЗАМОЧКА
+                        if (!category.isSystem) {
+                            // Если категория НЕ системная — показываем корзину
+                            IconButton(onClick = { categoryToDelete = category }) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Delete",
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        } else {
+                            // Если системная — показываем замочек
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = "System",
+                                modifier = Modifier
+                                    .padding(end = 12.dp)
+                                    .size(20.dp),
+                                tint = Color.Gray.copy(alpha = 0.6f)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (categoryToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { categoryToDelete = null },
+            title = { Text(stringResource(R.string.delete_category_title)) },
+            text = { Text(stringResource(R.string.delete_category_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    categoryToDelete?.let { viewModel.deleteCategory(it) }
+                    categoryToDelete = null
+                }) {
+                    Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { categoryToDelete = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+}

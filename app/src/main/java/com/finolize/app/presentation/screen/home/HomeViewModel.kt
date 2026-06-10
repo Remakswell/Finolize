@@ -3,8 +3,10 @@ package com.finolize.app.presentation.screen.home
 import android.text.format.DateUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.finolize.app.data.local.entity.CategoryEntity
 import com.finolize.app.data.local.entity.ExpenseEntity
 import com.finolize.app.data.local.prefs.PreferenceManager
+import com.finolize.app.domain.repository.ExpenseRepository
 import com.finolize.app.domain.usecase.DeleteExpenseUseCase
 import com.finolize.app.domain.usecase.GetExpensesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +19,7 @@ import javax.inject.Inject
 
 data class HomeUiState(
     val expenses: List<ExpenseEntity> = emptyList(),
+    val categories: List<CategoryEntity> = emptyList(),
     val totalBalance: Double = 0.0,
     val currency: String = "$"
 )
@@ -25,18 +28,23 @@ data class HomeUiState(
 class HomeViewModel @Inject constructor(
     private val getExpensesUseCase: GetExpensesUseCase,
     private val deleteExpenseUseCase: DeleteExpenseUseCase,
+    private val repository: ExpenseRepository,
     private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
     // Подписываемся на изменения в базе данных
-    val state: StateFlow<HomeUiState> = combine( getExpensesUseCase(),
-        preferenceManager.currencyFlow) { expenses, currency ->
+    val state: StateFlow<HomeUiState> = combine(
+        getExpensesUseCase(),
+        repository.getAllCategories(),
+        preferenceManager.currencyFlow
+    ) { expenses, categories, currency ->
 
         val todayExpenses = expenses.filter {
             DateUtils.isToday(it.timestamp)
         }
             HomeUiState(
                 expenses = todayExpenses,
+                categories = categories,
                 totalBalance = todayExpenses.sumOf { it.amount },
                 currency = currency
             )

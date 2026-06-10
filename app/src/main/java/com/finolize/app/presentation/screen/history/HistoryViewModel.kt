@@ -2,8 +2,10 @@ package com.finolize.app.presentation.screen.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.finolize.app.data.local.entity.CategoryEntity
 import com.finolize.app.data.local.entity.ExpenseEntity
 import com.finolize.app.data.local.prefs.PreferenceManager
+import com.finolize.app.domain.repository.ExpenseRepository
 import com.finolize.app.domain.usecase.DeleteExpenseUseCase
 import com.finolize.app.domain.usecase.GetExpensesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +15,7 @@ import javax.inject.Inject
 
 data class HistoryUiState(
     val groupedExpenses: Map<String, List<ExpenseEntity>> = emptyMap(),
+    val categories: List<CategoryEntity> = emptyList(),
     val searchQuery: String = "",
     val selectedCategory: String? = null,
     val currency: String = "$"
@@ -22,6 +25,7 @@ data class HistoryUiState(
 class HistoryViewModel @Inject constructor(
     private val getExpensesUseCase: GetExpensesUseCase,
     private val deleteExpenseUseCase: DeleteExpenseUseCase,
+    private val repository: ExpenseRepository,
     private val preferenceManager: PreferenceManager
 ) : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
@@ -29,10 +33,11 @@ class HistoryViewModel @Inject constructor(
 
     val state: StateFlow<HistoryUiState> = combine(
         getExpensesUseCase(),
+        repository.getAllCategories(),
         _searchQuery,
         _selectedCategory,
         preferenceManager.currencyFlow
-    ) { expenses, query, category, currency ->
+    ) { expenses, categories, query, category, currency ->
 
         val filtered = expenses.filter { expense ->
             val matchesQuery = expense.description.contains(query, ignoreCase = true) ||
@@ -47,6 +52,7 @@ class HistoryViewModel @Inject constructor(
                 val date = java.util.Date(it.timestamp)
                 java.text.SimpleDateFormat("MMMM yyyy", java.util.Locale.getDefault()).format(date)
             },
+            categories = categories,
             searchQuery = query,
             selectedCategory = category,
             currency = currency

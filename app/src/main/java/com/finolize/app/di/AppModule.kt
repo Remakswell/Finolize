@@ -2,6 +2,8 @@ package com.finolize.app.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.finolize.app.data.local.database.FinolizeDatabase
 import com.finolize.app.data.local.prefs.PreferenceManager
 import com.finolize.app.data.repository.ExpenseRepositoryImpl
@@ -25,13 +27,13 @@ object AppModule {
             context,
             FinolizeDatabase::class.java,
             "finolize_db"
-        ).build()
+        ).fallbackToDestructiveMigration(true).build()
     }
 
     @Provides
     @Singleton
     fun provideRepository(db: FinolizeDatabase): ExpenseRepository {
-        return ExpenseRepositoryImpl(db.expenseDao())
+        return ExpenseRepositoryImpl(db.expenseDao(), db.categoryDao())
     }
 
     @Provides

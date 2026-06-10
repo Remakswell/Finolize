@@ -23,4 +23,12 @@ class PreferenceManager @Inject constructor(context: Context) {
         prefs.edit { putString("selected_currency", currency) }
         _currencyFlow.value = currency // Оповещаем всех подписчиков!
     }
+
+    fun getLanguage(): String {
+        return prefs.getString("selected_language", "en") ?: "en"
+    }
+
+    fun setLanguage(langCode: String) {
+        prefs.edit().putString("selected_language", langCode).apply()
+    }
 }

@@ -42,12 +42,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.finolize.app.R
+import com.finolize.app.core.utils.IconMapper
 import com.finolize.app.data.local.entity.ExpenseEntity
 import com.finolize.app.presentation.components.DeleteDialog
 import com.finolize.app.presentation.components.ExpenseItem
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.core.graphics.toColorInt
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -144,6 +146,11 @@ fun HomeScreen(
             }
         } else {
             items(items = state.expenses, key = { it.id }) { expense ->
+                // Находим информацию о категории для текущего расхода
+                val categoryInfo = state.categories.find { it.name == expense.category }
+                val icon = IconMapper.getIconByName(categoryInfo?.iconName ?: "Category")
+                val color = categoryInfo?.let { Color(it.colorHex.toColorInt()) } ?: Color.Gray
+
                 val dismissState = rememberSwipeToDismissBoxState(
                     confirmValueChange = {
                         if (it == SwipeToDismissBoxValue.EndToStart) {
@@ -173,6 +180,8 @@ fun HomeScreen(
                     ExpenseItem(
                         modifier = Modifier.clickable { navController.navigate("add_expense?expenseId=${expense.id}") },
                         categoryName = expense.category,
+                        categoryIcon = icon,
+                        categoryColor = color,
                         amount = String.format("%.2f", expense.amount),
                         timestamp = expense.timestamp,
                         description = expense.description,

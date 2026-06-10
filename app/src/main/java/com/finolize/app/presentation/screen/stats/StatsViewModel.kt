@@ -1,7 +1,9 @@
 package com.finolize.app.presentation.screen.stats
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.finolize.app.R
 import com.finolize.app.data.local.prefs.PreferenceManager
 import com.finolize.app.domain.usecase.CategoryStat
 import com.finolize.app.domain.usecase.GetStatsUseCase
@@ -15,7 +17,13 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-enum class StatsPeriod { TODAY, WEEK, MONTH, YEAR, ALL }
+enum class StatsPeriod(@StringRes val labelRes: Int) {
+    TODAY(R.string.period_today),
+    WEEK(R.string.period_week),
+    MONTH(R.string.period_month),
+    YEAR(R.string.period_year),
+    ALL(R.string.period_all)
+}
 
 data class StatsUiState(
     val stats: List<CategoryStat> = emptyList(),

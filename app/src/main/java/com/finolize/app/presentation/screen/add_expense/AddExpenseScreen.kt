@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
@@ -14,26 +15,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.finolize.app.R
+import com.finolize.app.core.utils.IconMapper
 import com.finolize.app.core.utils.toFormattedDate
-import com.finolize.app.domain.model.CategoryList
+import androidx.core.graphics.toColorInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpenseScreen(
     expenseId: Long = -1L,
     onNavigateBack: () -> Unit,
+    navController: NavHostController,
     viewModel: AddExpenseViewModel = hiltViewModel()
 ) {
-    var amountText by remember { mutableStateOf("") }
-    var descText by remember { mutableStateOf("") }
-    var currentCategory by remember { mutableStateOf(CategoryList.categories[0]) }
-
+    val context = LocalContext.current
+    val categories by viewModel.categories.collectAsState()
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = viewModel.selectedTimestamp
@@ -41,15 +45,6 @@ fun AddExpenseScreen(
 
     LaunchedEffect(expenseId) {
         if (expenseId != -1L) viewModel.loadExpense(expenseId)
-    }
-
-    // Синхронизируем UI с ViewModel при редактировании
-    LaunchedEffect(viewModel.isEditing) {
-        if (viewModel.isEditing) {
-            amountText = viewModel.amount
-            descText = viewModel.description
-            currentCategory = CategoryList.getCategoryByName(viewModel.selectedCategoryName)
-        }
     }
 
     Scaffold(
@@ -74,14 +69,14 @@ fun AddExpenseScreen(
         ) {
             // 1. Поле ввода суммы
             OutlinedTextField(
-                value = amountText,
+                value = viewModel.amount,
                 onValueChange = { input ->
                     val filtered = input.replace(",", ".")
                     val regex = Regex("""^\d{0,6}(\.\d{0,2})?$""")
                     if (filtered.isEmpty() || filtered.matches(regex)) {
                         val doubleValue = filtered.toDoubleOrNull() ?: 0.0
                         if (doubleValue <= 1000000.0) {
-                            amountText = filtered
+                            viewModel.amount = filtered
                         }
                     }
                 },
@@ -94,8 +89,8 @@ fun AddExpenseScreen(
 
             // 2. Поле ввода описания
             OutlinedTextField(
-                value = descText,
-                onValueChange = { descText = it },
+                value = viewModel.description,
+                onValueChange = { viewModel.description = it },
                 label = { Text(stringResource(R.string.description)) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
@@ -113,20 +108,36 @@ fun AddExpenseScreen(
                 ) {
                     Icon(Icons.Default.DateRange, contentDescription = null)
                     Spacer(Modifier.width(12.dp))
-                    Text(text = viewModel.selectedTimestamp.toFormattedDate()) // Твоя функция из DateUtils
+                    Text(text = viewModel.selectedTimestamp.toFormattedDate(context)) // Твоя функция из DateUtils
                 }
             }
 
             // 4. Выбор категории
             Text(stringResource(R.string.category), style = MaterialTheme.typography.titleMedium)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(CategoryList.categories) { cat ->
+                items(categories) { category -> // Используем список из базы!
                     FilterChip(
-                        selected = currentCategory == cat,
-                        onClick = { currentCategory = cat },
-                        label = { Text(cat.name) },
-                        leadingIcon = { Icon(cat.icon, null, Modifier.size(18.dp)) }
+                        selected = viewModel.selectedCategoryName == category.name,
+                        onClick = { viewModel.selectedCategoryName = category.name },
+                        label = { Text(category.name) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = IconMapper.getIconByName(category.iconName),
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = Color(category.colorHex.toColorInt())
+                            )
+                        }
                     )
+                }
+                item {
+                    IconButton(onClick = { navController.navigate("add_category") }) {
+                        Icon(
+                            Icons.Default.AddCircle,
+                            contentDescription = "Add Category",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
 
@@ -135,17 +146,14 @@ fun AddExpenseScreen(
             // 5. Кнопка сохранения
             Button(
                 onClick = {
-                    viewModel.amount = amountText
-                    viewModel.description = descText
-                    viewModel.selectedCategoryName = currentCategory.name
                     viewModel.saveExpense()
                     onNavigateBack()
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = amountText.isNotEmpty() && (amountText.toDoubleOrNull() ?: 0.0) > 0,
+                enabled = viewModel.amount.isNotEmpty() && (viewModel.amount.toDoubleOrNull() ?: 0.0) > 0,
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text(stringResource(R.string.save))
+                Text(stringResource(R.string.save), style = MaterialTheme.typography.titleMedium)
             }
         }
     }

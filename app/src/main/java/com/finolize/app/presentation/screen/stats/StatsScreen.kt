@@ -64,7 +64,7 @@ fun StatsScreen(
                     onClick = { viewModel.selectPeriod(period) },
                     text = {
                         Text(
-                            text = period.name.lowercase().replaceFirstChar { it.uppercase() },
+                            text = stringResource(period.labelRes),
                             fontSize = 12.sp
                         )
                     }
@@ -76,7 +76,7 @@ fun StatsScreen(
 
         if (state.isEmpty) {
             Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                Text(text = "No expenses for this period", color = Color.Gray)
+                Text(text = stringResource(R.string.no_expenses_for_this_period), color = Color.Gray)
             }
         } else {
             // 3. График с суммой в центре
@@ -92,7 +92,7 @@ fun StatsScreen(
                 // ВЫВОДИМ СУММУ В ЦЕНТРЕ
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Total",
+                        text = stringResource(R.string.total),
                         style = MaterialTheme.typography.labelMedium,
                         color = Color.Gray
                     )

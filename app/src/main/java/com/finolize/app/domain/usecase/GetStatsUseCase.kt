@@ -1,11 +1,10 @@
 package com.finolize.app.domain.usecase
 
-import com.finolize.app.domain.model.CategoryList
 import com.finolize.app.domain.repository.ExpenseRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import androidx.compose.ui.graphics.Color
 import com.finolize.app.presentation.screen.stats.StatsPeriod
+import kotlinx.coroutines.flow.combine
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -21,27 +20,31 @@ class GetStatsUseCase @Inject constructor(
 ) {
     operator fun invoke(period: StatsPeriod): Flow<List<CategoryStat>> {
         val startTime = calculateStartTime(period)
-        return repository.getAllExpenses().map { expenses ->
-            // 1. Фильтруем по времени
-            val filteredExpenses = if (period == StatsPeriod.ALL) {
-                expenses
-            } else {
-                expenses.filter { it.timestamp >= startTime }
-            }
+
+        // Объединяем поток расходов и поток категорий
+        return combine(
+            repository.getAllExpenses(),
+            repository.getAllCategories()
+        ) { expenses, categories ->
+            val filteredExpenses = if (period == StatsPeriod.ALL) expenses
+            else expenses.filter { it.timestamp >= startTime }
 
             val total = filteredExpenses.sumOf { it.amount }
-            if (total == 0.0) return@map emptyList()
+            if (total == 0.0) return@combine emptyList()
 
-            // 2. Группируем и считаем проценты
             filteredExpenses.groupBy { it.category }
                 .map { (name, list) ->
                     val categoryAmount = list.sumOf { it.amount }
-                    val categoryInfo = CategoryList.getCategoryByName(name)
+                    // Ищем цвет в списке категорий из базы
+                    val categoryInfo = categories.find { it.name == name }
+                    val color = categoryInfo?.let { Color(android.graphics.Color.parseColor(it.colorHex)) }
+                        ?: Color.Gray
+
                     CategoryStat(
                         categoryName = name,
                         amount = categoryAmount,
                         percentage = (categoryAmount / total).toFloat(),
-                        color = categoryInfo.color
+                        color = color
                     )
                 }
                 .sortedByDescending { it.amount }
