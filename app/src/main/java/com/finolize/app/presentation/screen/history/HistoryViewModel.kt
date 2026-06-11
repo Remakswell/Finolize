@@ -16,6 +16,7 @@ import javax.inject.Inject
 data class HistoryUiState(
     val groupedExpenses: Map<String, List<ExpenseEntity>> = emptyMap(),
     val categories: List<CategoryEntity> = emptyList(),
+    val totalAmount: Double = 0.0,
     val searchQuery: String = "",
     val selectedCategory: String? = null,
     val currency: String = "$"
@@ -53,6 +54,7 @@ class HistoryViewModel @Inject constructor(
                 java.text.SimpleDateFormat("MMMM yyyy", java.util.Locale.getDefault()).format(date)
             },
             categories = categories,
+            totalAmount = filtered.sumOf { it.amount },
             searchQuery = query,
             selectedCategory = category,
             currency = currency
