@@ -25,7 +25,10 @@ class PreferenceManager @Inject constructor(context: Context) {
     }
 
     fun getLanguage(): String {
-        return prefs.getString("selected_language", "en") ?: "en"
+        val systemLang = java.util.Locale.getDefault().language
+        val supportedLangs = listOf("en", "ru", "uk")
+        val defaultLang = if (systemLang in supportedLangs) systemLang else "en"
+        return prefs.getString("selected_language", null) ?: defaultLang
     }
 
     fun setLanguage(langCode: String) {

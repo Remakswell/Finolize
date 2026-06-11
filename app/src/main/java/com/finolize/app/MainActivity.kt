@@ -1,9 +1,10 @@
 package com.finolize.app
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -25,6 +27,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.finolize.app.data.local.prefs.PreferenceManager
 import com.finolize.app.domain.repository.ExpenseRepository
 import com.finolize.app.presentation.components.FinolizeBottomBar
 import com.finolize.app.presentation.components.Screen
@@ -40,12 +43,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     @Inject lateinit var repository: ExpenseRepository
+    @Inject lateinit var preferenceManager: PreferenceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val savedLang = preferenceManager.getLanguage()
+        val appLocale = LocaleListCompat.forLanguageTags(savedLang)
+        AppCompatDelegate.setApplicationLocales(appLocale)
 
         lifecycleScope.launch {
             repository.prefillCategories(applicationContext)
