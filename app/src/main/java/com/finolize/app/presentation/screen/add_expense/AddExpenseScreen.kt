@@ -42,6 +42,7 @@ fun AddExpenseScreen(
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = viewModel.selectedTimestamp
     )
+    var isNavigating by remember { mutableStateOf(false) }
 
     LaunchedEffect(expenseId) {
         if (expenseId != -1L) viewModel.loadExpense(expenseId)
@@ -52,7 +53,12 @@ fun AddExpenseScreen(
             TopAppBar(
                 title = { Text(if (viewModel.isEditing) "Edit Expense" else stringResource(R.string.add_expense)) },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = {
+                        if (!isNavigating) {
+                            isNavigating = true
+                            onNavigateBack()
+                        }
+                    }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
                 }
@@ -146,14 +152,23 @@ fun AddExpenseScreen(
             // 5. Кнопка сохранения
             Button(
                 onClick = {
-                    viewModel.saveExpense()
-                    onNavigateBack()
+                    viewModel.saveExpense(onSuccess = { onNavigateBack() })
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = viewModel.amount.isNotEmpty() && (viewModel.amount.toDoubleOrNull() ?: 0.0) > 0,
+                enabled = !viewModel.isSaving && viewModel.amount.isNotBlank() && (viewModel.amount.toDoubleOrNull() ?: 0.0) > 0,
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text(stringResource(R.string.save), style = MaterialTheme.typography.titleMedium)
+                if (viewModel.isSaving) {
+                    // Вместо текста показываем крутилку
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text(stringResource(R.string.save), style = MaterialTheme.typography.titleMedium)
+                }
+
             }
         }
     }

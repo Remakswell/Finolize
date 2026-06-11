@@ -36,6 +36,9 @@ class AddExpenseViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val currency = preferenceManager.getCurrency()
 
+    var isSaving by mutableStateOf(false)
+        private set
+
     fun loadExpense(id: Long) {
         if (id == -1L || isEditing) return // Если уже загрузили или ID пустой
         viewModelScope.launch {
@@ -51,11 +54,13 @@ class AddExpenseViewModel @Inject constructor(
     }
 
 
-    fun saveExpense() {
+    fun saveExpense(onSuccess: () -> Unit) {
+        if (isSaving) return
         val amountDouble = amount.toDoubleOrNull() ?: 0.0
         if (amountDouble <= 0) return
 
         viewModelScope.launch {
+            isSaving = true
             val expense = ExpenseEntity(
                 id = editingId ?: 0, // Если редактируем, используем старый ID
                 amount = amountDouble,
@@ -64,6 +69,7 @@ class AddExpenseViewModel @Inject constructor(
                 timestamp = selectedTimestamp
             )
             addExpenseUseCase(expense)
+            onSuccess()
         }
     }
 }

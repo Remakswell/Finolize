@@ -37,6 +37,7 @@ fun AddCategoryScreen(
     var name by remember { mutableStateOf("") }
     var selectedIcon by remember { mutableStateOf("ShoppingCart") }
     var selectedColor by remember { mutableStateOf(Color(0xFF2196F3)) }
+    var isNavigating by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
 
@@ -58,7 +59,12 @@ fun AddCategoryScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.new_category)) },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) { Icon(Icons.Default.ArrowBack, null) }
+                    IconButton(onClick = {
+                        if (!isNavigating) {
+                            isNavigating = true
+                            onNavigateBack()
+                        }
+                    }) { Icon(Icons.Default.ArrowBack, null) }
                 }
             )
         }
@@ -174,16 +180,19 @@ fun AddCategoryScreen(
             Button(
                 onClick = {
                     val colorHex = String.format("#%06X", (0xFFFFFF and selectedColor.toArgb()))
-                    viewModel.addCategory (name, selectedIcon, colorHex)
-                    onNavigateBack()
+                    viewModel.addCategory (name, selectedIcon, colorHex, onSuccess = { onNavigateBack() })
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                enabled = name.isNotBlank(),
+                enabled = !viewModel.isSaving && name.isNotBlank(),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text(stringResource(R.string.create_category), style = MaterialTheme.typography.titleMedium)
+                if (viewModel.isSaving) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
+                } else {
+                    Text(stringResource(R.string.create_category), style = MaterialTheme.typography.titleMedium)
+                }
             }
         }
     }
