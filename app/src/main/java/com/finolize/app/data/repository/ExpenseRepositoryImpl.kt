@@ -22,13 +22,8 @@ class ExpenseRepositoryImpl(
         // Проверяем, есть ли уже категории в базе
         val existing = categoryDao.getAllCategories().first()
         if (existing.isEmpty()) {
-            val initialCategories = listOf(
-                CategoryEntity(name = context.getString(R.string.cat_food), iconName = "Restaurant", colorHex = "#FF9800", isSystem = true),
-                CategoryEntity(name = context.getString(R.string.cat_transport), iconName = "Bus", colorHex = "#2196F3", isSystem = true),
-                CategoryEntity(name = context.getString(R.string.cat_shopping), iconName = "ShoppingCart", colorHex = "#E91E63", isSystem = true),
-                CategoryEntity(name = context.getString(R.string.cat_entertainment), iconName = "Movie", colorHex = "#9C27B0", isSystem = true)
-            )
-            categoryDao.insertInitialCategories(initialCategories)
+            val initialCategory = CategoryEntity( name = "General", iconName = "Category", colorHex = "#9E9E9E", isSystem = true )
+            categoryDao.insertInitialCategories(listOf(initialCategory))
         }
     }
     override fun getAllCategories() = categoryDao.getAllCategories()

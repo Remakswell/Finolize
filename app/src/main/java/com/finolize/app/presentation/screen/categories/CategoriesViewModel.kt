@@ -16,17 +16,29 @@ import javax.inject.Inject
 class CategoriesViewModel @Inject constructor(private val repository: ExpenseRepository) :
     ViewModel() {
     val categories = repository.getAllCategories()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     var isSaving by mutableStateOf(false)
         private set
 
+    var nameError by mutableStateOf<String?>(null)
+        private set
+
     fun addCategory(name: String, icon: String, color: String, onSuccess: () -> Unit) {
         if (isSaving) return
+        val trimmedName = name.trim()
+        // ПРОВЕРКА НА ДУБЛИКАТ (без учета регистра)
+        val exists = categories.value.any { it.name.equals(trimmedName, ignoreCase = true) }
+
+        if (exists) {
+            nameError = "exists"
+            return
+        }
         viewModelScope.launch {
             isSaving = true
+            nameError = null
             repository.insertCategory(
-                CategoryEntity(name = name, iconName = icon, colorHex = color)
+                CategoryEntity(name = trimmedName, iconName = icon, colorHex = color)
             )
             onSuccess()
         }
@@ -36,5 +48,9 @@ class CategoriesViewModel @Inject constructor(private val repository: ExpenseRep
         viewModelScope.launch {
             repository.deleteCategory(category)
         }
+    }
+
+    fun clearError() {
+        nameError = null
     }
 }

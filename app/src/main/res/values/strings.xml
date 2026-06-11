@@ -56,6 +56,8 @@
     <string name="lang_uk">Українська</string>
     <string name="total_history">Total History</string>
     <string name="total_for">Total for %1$s</string>
+    <string name="version">Version</string>
+    <string name="category_exists">This category already exists</string>
 
 
 </resources>

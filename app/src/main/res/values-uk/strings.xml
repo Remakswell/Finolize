@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Finolize</string>
     <string name="nav_home">Головна</string>
     <string name="nav_stats">Статистика</string>
     <string name="nav_settings">Налаштування</string>
@@ -56,6 +57,8 @@
     <string name="lang_uk">Українська</string>
     <string name="total_history">Разом за весь час</string>
     <string name="total_for">Всього за категорією %1$s</string>
+    <string name="version">Версія</string>
+    <string name="category_exists">Ця категорія вже існує</string>
 
 
 </resources>

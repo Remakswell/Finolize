@@ -155,7 +155,10 @@ fun AddExpenseScreen(
                     viewModel.saveExpense(onSuccess = { onNavigateBack() })
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !viewModel.isSaving && viewModel.amount.isNotBlank() && (viewModel.amount.toDoubleOrNull() ?: 0.0) > 0,
+                enabled = !viewModel.isSaving
+                        && viewModel.selectedCategoryName.isNotEmpty()
+                        && viewModel.amount.isNotBlank()
+                        && (viewModel.amount.toDoubleOrNull() ?: 0.0) > 0,
                 shape = RoundedCornerShape(16.dp)
             ) {
                 if (viewModel.isSaving) {

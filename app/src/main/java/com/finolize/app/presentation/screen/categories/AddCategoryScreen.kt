@@ -34,12 +34,7 @@ fun AddCategoryScreen(
     onNavigateBack: () -> Unit,
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
-    var name by remember { mutableStateOf("") }
-    var selectedIcon by remember { mutableStateOf("ShoppingCart") }
-    var selectedColor by remember { mutableStateOf(Color(0xFF2196F3)) }
-    var isNavigating by remember { mutableStateOf(false) }
-
-    val scrollState = rememberScrollState()
+    val categories by viewModel.categories.collectAsState()
 
     val icons = listOf(
         "ShoppingCart", "Restaurant", "Bus", "Movie", "Favorite",
@@ -48,11 +43,30 @@ fun AddCategoryScreen(
     )
 
     val colors = listOf(
-        Color(0xFFF44336), Color(0xFFE91E63), Color(0xFF9C27B0), Color(0xFF673AB7),
-        Color(0xFF3F51B5), Color(0xFF2196F3), Color(0xFF03A9F4), Color(0xFF00BCD4),
-        Color(0xFF009688), Color(0xFF4CAF50), Color(0xFF8BC34A), Color(0xFFCDDC39),
-        Color(0xFFFFEB3B), Color(0xFFFFC107), Color(0xFFFF9800), Color(0xFFFF5722)
+        Color(0xFFF44336), // Красный
+        Color(0xFF2196F3), // Синий
+        Color(0xFF4CAF50), // Зеленый
+        Color(0xFFFFEB3B), // Желтый
+        Color(0xFFFF9800), // Оранжевый
+        Color(0xFF9C27B0), // Фиолетовый
+        Color(0xFFE91E63), // Розовый
+        Color(0xFF03A9F4), // Голубой
+        Color(0xFF795548), // Коричневый
+        Color(0xFF9E9E9E), // Серый
+        Color(0xFF009688), // Бирюзовый
+        Color(0xFF8BC34A), // Салатовый
+        Color(0xFF3F51B5), // Темно-синий (Индиго)
+        Color(0xFFCDDC39), // Лайм
+        Color(0xFFFF5722), // Темно-оранжевый
+        Color(0xFF333333)  // Черный
     )
+
+    var name by remember { mutableStateOf("") }
+    var selectedIcon by remember { mutableStateOf(icons.first()) }
+    var selectedColor by remember { mutableStateOf(colors.first()) }
+    var isNavigating by remember { mutableStateOf(false) }
+
+    val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -89,14 +103,25 @@ fun AddCategoryScreen(
                     onValueChange = { input ->
                         if (input.length <= 20) {
                             name = input
+                            viewModel.clearError()
                         }
                     },
                     label = { Text(stringResource(R.string.category_name)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp),
+                    isError = viewModel.nameError != null,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
-                    supportingText = { Text( text = "${name.length} / 20", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End ) }
+                    supportingText = {
+                        if (viewModel.nameError != null) {
+                            Text(
+                                text = stringResource(R.string.category_exists),
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        } else {
+                            Text(text = "${name.length} / 20", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End)
+                        }
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))

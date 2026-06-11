@@ -8,6 +8,10 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -20,8 +24,13 @@ fun SettingsScreen(
     onNavigateToManageCategories: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     val currencies = listOf("$", "€", "₴", "₽")
     val languages = listOf("en" to R.string.lang_en, "ru" to R.string.lang_ru, "uk" to R.string.lang_uk)
+
+    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+    val versionName = packageInfo.versionName ?: "1.0.0"
 
     LazyColumn(
         modifier = Modifier
@@ -54,8 +63,9 @@ fun SettingsScreen(
                 shape = MaterialTheme.shapes.medium
             ) {
                 ListItem(
-                    headlineContent = { Text(stringResource(R.string.manage_categories)) },
-                    leadingContent = { Icon(Icons.Default.Category, null) },
+                    headlineContent = { Text(stringResource(R.string.manage_categories), fontWeight = FontWeight.Medium) },
+                    leadingContent = { Icon(Icons.Default.Category, null, tint = MaterialTheme.colorScheme.primary) },
+                    trailingContent = { Icon( imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = Color.White.copy(alpha = 0.8f) ) },
                     modifier = Modifier.clickable { onNavigateToManageCategories() }
                 )
             }
@@ -147,6 +157,28 @@ fun SettingsScreen(
                     }
                 }
             }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Gray.copy(alpha = 0.5f)
+                )
+                Text(
+                    text = "${stringResource(R.string.version)} $versionName",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray.copy(alpha = 0.5f)
+                )
+            }
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

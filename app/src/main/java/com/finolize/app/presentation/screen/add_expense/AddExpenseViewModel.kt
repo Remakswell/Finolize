@@ -28,7 +28,7 @@ class AddExpenseViewModel @Inject constructor(
     // Состояния для полей ввода (переносим из Screen во ViewModel)
     var amount by mutableStateOf("")
     var description by mutableStateOf("")
-    var selectedCategoryName by mutableStateOf("Food")
+    var selectedCategoryName by mutableStateOf("General")
     var selectedTimestamp by mutableLongStateOf(System.currentTimeMillis())
     var isEditing by mutableStateOf(false)
     private var editingId: Long? = null
