@@ -99,9 +99,9 @@ class MainActivity : AppCompatActivity() {
     @Composable
     fun FinolizeAppContent(navController: NavHostController) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-        val isFullScreen = currentRoute?.startsWith("add_expense") == true ||
-                currentRoute?.startsWith("add_category") == true ||
+        val currentRoute = navBackStackEntry?.destination?.route ?: Screen.Home.route
+        val isFullScreen = currentRoute.startsWith("add_expense") ||
+                currentRoute.startsWith("add_category") ||
                 currentRoute == "manage_categories"
 
         Scaffold(
