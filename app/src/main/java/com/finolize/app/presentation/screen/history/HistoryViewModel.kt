@@ -34,7 +34,9 @@ class HistoryViewModel @Inject constructor(
 
     val state: StateFlow<HistoryUiState> = combine(
         getExpensesUseCase(),
-        repository.getAllCategories(),
+        repository.getAllCategories().map { list ->
+            list.sortedWith(compareByDescending<CategoryEntity> { it.isSystem }.thenBy { it.name })
+        },
         _searchQuery,
         _selectedCategory,
         preferenceManager.currencyFlow

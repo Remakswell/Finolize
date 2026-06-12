@@ -15,7 +15,11 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(private val repository: ExpenseRepository) :
     ViewModel() {
+
     val categories = repository.getAllCategories()
+        .map { list ->
+            list.sortedWith(compareByDescending<CategoryEntity> { it.isSystem }.thenBy { it.name })
+        }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     var isSaving by mutableStateOf(false)

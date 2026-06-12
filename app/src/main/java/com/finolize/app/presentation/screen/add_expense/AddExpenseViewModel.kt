@@ -9,10 +9,12 @@ import com.finolize.app.domain.usecase.GetExpenseByIdUseCase
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.setValue
+import com.finolize.app.data.local.entity.CategoryEntity
 import com.finolize.app.data.local.prefs.PreferenceManager
 import com.finolize.app.domain.repository.ExpenseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,6 +35,10 @@ class AddExpenseViewModel @Inject constructor(
     var isEditing by mutableStateOf(false)
     private var editingId: Long? = null
     val categories = repository.getAllCategories()
+        .map { list ->
+            // Сортируем: сначала системные (isSystem == true), потом по алфавиту
+            list.sortedWith(compareByDescending<CategoryEntity> { it.isSystem }.thenBy { it.name })
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val currency = preferenceManager.getCurrency()
 
