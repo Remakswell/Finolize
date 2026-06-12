@@ -18,10 +18,14 @@ fun Long.toFormattedDate(context: Context): String {
     }
 }
 
-fun Long.toGroupHeader(context: Context): String {
+fun Long.toFormattedDateOnly(context: Context): String {
     return when {
         DateUtils.isToday(this) -> context.getString(R.string.today)
         DateUtils.isToday(this + DateUtils.DAY_IN_MILLIS) -> context.getString(R.string.yesterday)
         else -> SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(Date(this))
     }
+}
+
+fun Long.toFormattedTimeOnly(): String {
+    return SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(this))
 }

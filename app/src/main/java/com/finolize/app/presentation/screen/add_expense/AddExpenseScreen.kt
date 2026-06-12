@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -25,8 +26,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.finolize.app.R
 import com.finolize.app.core.utils.IconMapper
-import com.finolize.app.core.utils.toFormattedDate
 import androidx.core.graphics.toColorInt
+import com.finolize.app.core.utils.toFormattedDateOnly
+import com.finolize.app.core.utils.toFormattedTimeOnly
+import java.util.Calendar
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,10 +42,20 @@ fun AddExpenseScreen(
 ) {
     val context = LocalContext.current
     val categories by viewModel.categories.collectAsState()
+
     var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
+
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = viewModel.selectedTimestamp
     )
+
+    val timePickerState = rememberTimePickerState(
+        initialHour = Calendar.getInstance().apply { timeInMillis = viewModel.selectedTimestamp }.get(Calendar.HOUR_OF_DAY),
+        initialMinute = Calendar.getInstance().apply { timeInMillis = viewModel.selectedTimestamp }.get(Calendar.MINUTE),
+        is24Hour = true
+    )
+
     var isNavigating by remember { mutableStateOf(false) }
 
     LaunchedEffect(expenseId) {
@@ -102,19 +116,47 @@ fun AddExpenseScreen(
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
             )
 
-            // 3. выбор даты
-            OutlinedCard(
-                onClick = { showDatePicker = true },
+            // 3. Выбор даты и времени
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                // Карточка Даты
+                OutlinedCard(
+                    onClick = { showDatePicker = true },
+                    modifier = Modifier.weight(1f),
+                    shape = MaterialTheme.shapes.medium
                 ) {
-                    Icon(Icons.Default.DateRange, contentDescription = null)
-                    Spacer(Modifier.width(12.dp))
-                    Text(text = viewModel.selectedTimestamp.toFormattedDate(context)) // Твоя функция из DateUtils
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.DateRange, contentDescription = null, modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            text = viewModel.selectedTimestamp.toFormattedDateOnly(context),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+
+                // Карточка Времени
+                OutlinedCard(
+                    onClick = { showTimePicker = true },
+                    modifier = Modifier.weight(0.6f),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.Schedule, contentDescription = null, modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            text = viewModel.selectedTimestamp.toFormattedTimeOnly(),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
             }
 
@@ -176,21 +218,79 @@ fun AddExpenseScreen(
         }
     }
 
-    // диалог календаря
+    // Диалог выбора даты
     if (showDatePicker) {
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
                 TextButton(onClick = {
-                    viewModel.selectedTimestamp = datePickerState.selectedDateMillis ?: System.currentTimeMillis()
+                    val selectedDate =
+                        datePickerState.selectedDateMillis ?: System.currentTimeMillis()
+                    val dateCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+                        timeInMillis = selectedDate
+                    }
+                    val resultCalendar = Calendar.getInstance().apply {
+                        timeInMillis = viewModel.selectedTimestamp // Сохраняем текущее время
+                        set(Calendar.YEAR, dateCalendar.get(Calendar.YEAR))
+                        set(Calendar.MONTH, dateCalendar.get(Calendar.MONTH))
+                        set(Calendar.DAY_OF_MONTH, dateCalendar.get(Calendar.DAY_OF_MONTH))
+                    }
+                    viewModel.selectedTimestamp = resultCalendar.timeInMillis
                     showDatePicker = false
                 }) { Text("OK") }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text("Cancel") }
+                TextButton(onClick = {
+                    showDatePicker = false
+                }) { Text(stringResource(R.string.cancel)) }
             }
         ) {
             DatePicker(state = datePickerState)
         }
     }
+
+    // Диалог выбора времени
+    if (showTimePicker) {
+        TimePickerDialog(
+            onDismissRequest = { showTimePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    val currentCalendar = Calendar.getInstance().apply {
+                        timeInMillis = viewModel.selectedTimestamp
+                    }
+                    currentCalendar.set(Calendar.HOUR_OF_DAY, timePickerState.hour)
+                    currentCalendar.set(Calendar.MINUTE, timePickerState.minute)
+
+                    viewModel.selectedTimestamp = currentCalendar.timeInMillis
+                    showTimePicker = false
+                }) { Text("OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showTimePicker = false
+                }) { Text(stringResource(R.string.cancel)) }
+            }
+        ) {
+            TimePicker(state = timePickerState)
+        }
+    }
+}
+
+@Composable
+fun TimePickerDialog(
+    onDismissRequest: () -> Unit,
+    confirmButton: @Composable () -> Unit,
+    dismissButton: @Composable () -> Unit,
+    content: @Composable () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = confirmButton,
+        dismissButton = dismissButton,
+        text = {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                content()
+            }
+        }
+    )
 }
