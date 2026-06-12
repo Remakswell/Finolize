@@ -98,8 +98,7 @@ fun HomeScreen(
                         Text(
                             text = stringResource(R.string.todays_expenses).uppercase(),
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
-                            modifier = Modifier.padding(start = 48.dp)
+                            color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f)
                         )
                         Spacer(Modifier.height(8.dp))
                         Text(
