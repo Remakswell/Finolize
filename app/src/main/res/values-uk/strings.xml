@@ -58,7 +58,11 @@
     <string name="total_history">Разом за весь час</string>
     <string name="total_for">Всього за категорією %1$s</string>
     <string name="version">Версія</string>
+    <string name="security">Безпека</string>
     <string name="category_exists">Ця категорія вже існує</string>
+    <string name="biometric_auth">Біометричний замок</string>
+    <string name="biometric_desc">Захистіть свої дані за допомогою відбитка пальця або ідентифікації обличчя</string>
+    <string name="biometric_enable">Налаштуйте PIN-код або біометричні дані в налаштуваннях телефону, щоб увімкнути</string>
 
 
 </resources>

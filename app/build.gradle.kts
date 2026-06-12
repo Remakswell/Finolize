@@ -64,6 +64,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
 
+    // Biometric
+    implementation(libs.androidx.biometric)
+
     implementation(libs.androidx.compose.material.icons.extended)
 
     testImplementation(libs.junit)

@@ -14,10 +14,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 import androidx.compose.ui.Modifier
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
@@ -27,6 +29,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.finolize.app.core.utils.BiometricHelper
 import com.finolize.app.data.local.prefs.PreferenceManager
 import com.finolize.app.domain.repository.ExpenseRepository
 import com.finolize.app.presentation.components.FinolizeBottomBar
@@ -48,8 +51,23 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var repository: ExpenseRepository
     @Inject lateinit var preferenceManager: PreferenceManager
 
+    private var isUnlocked by mutableStateOf(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val biometricEnabledInApp = preferenceManager.isBiometricEnabled()
+        val canAuthenticate = BiometricHelper.canAuthenticate(this)
+        val shouldShowPrompt = biometricEnabledInApp && canAuthenticate
+        isUnlocked = !shouldShowPrompt
+
+        if (shouldShowPrompt) {
+            BiometricHelper.showBiometricPrompt(
+                activity = this,
+                onSuccess = { isUnlocked = true },
+                onError = { finish() }
+            )
+        }
 
         val savedLang = preferenceManager.getLanguage()
         val appLocale = LocaleListCompat.forLanguageTags(savedLang)
@@ -61,8 +79,10 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             FinolizeTheme {
-                val navController = rememberNavController()
-                FinolizeAppContent(navController)
+                if (isUnlocked) {
+                    val navController = rememberNavController()
+                    FinolizeAppContent(navController)
+                }
             }
         }
     }

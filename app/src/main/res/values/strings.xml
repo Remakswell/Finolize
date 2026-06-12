@@ -57,7 +57,11 @@
     <string name="total_history">Total History</string>
     <string name="total_for">Total for %1$s</string>
     <string name="version">Version</string>
+    <string name="security">Security</string>
     <string name="category_exists">This category already exists</string>
+    <string name="biometric_auth">Biometric Lock</string>
+    <string name="biometric_desc">Protect your data with fingerprint or face ID</string>
+    <string name="biometric_enable">Set up PIN or Biometrics in phone settings to enable</string>
 
 
 </resources>

@@ -17,6 +17,9 @@ class PreferenceManager @Inject constructor(context: Context) {
     private val _currencyFlow = MutableStateFlow(prefs.getString("selected_currency", "$") ?: "$")
     val currencyFlow: StateFlow<String> = _currencyFlow
 
+    private val _biometricFlow = MutableStateFlow(prefs.getBoolean("biometric_enabled", false))
+    val biometricFlow: StateFlow<Boolean> = _biometricFlow
+
     fun getCurrency(): String = _currencyFlow.value
 
     fun setCurrency(currency: String) {
@@ -32,6 +35,13 @@ class PreferenceManager @Inject constructor(context: Context) {
     }
 
     fun setLanguage(langCode: String) {
-        prefs.edit().putString("selected_language", langCode).apply()
+        prefs.edit { putString("selected_language", langCode) }
+    }
+
+    fun isBiometricEnabled(): Boolean = _biometricFlow.value
+
+    fun setBiometricEnabled(enabled: Boolean) {
+        prefs.edit { putBoolean("biometric_enabled", enabled) }
+        _biometricFlow.value = enabled
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -49,29 +50,76 @@ fun SettingsScreen(
             )
         }
 
-        // 2. СЕКЦИЯ КАТЕГОРИЙ
+        // 2. СЕКЦИЯ "GENERAL"
         item {
             Text(
                 text = stringResource(R.string.general),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary
             )
-        }
-        item {
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Column {
+                    // ПУНКТ: КАТЕГОРИИ
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.manage_categories), fontWeight = FontWeight.Medium) },
+                        leadingContent = { Icon(Icons.Default.Category, null, tint = MaterialTheme.colorScheme.primary) },
+                        trailingContent = {
+                            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = Color.White.copy(alpha = 0.8f))
+                        },
+                        modifier = Modifier.clickable { onNavigateToManageCategories() }
+                    )
+                }
+            }
+        }
+
+        // 3. СЕКЦИЯ "SECURITY"
+        item {
+            Text(
+                text = stringResource(R.string.security),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
                 ListItem(
-                    headlineContent = { Text(stringResource(R.string.manage_categories), fontWeight = FontWeight.Medium) },
-                    leadingContent = { Icon(Icons.Default.Category, null, tint = MaterialTheme.colorScheme.primary) },
-                    trailingContent = { Icon( imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = Color.White.copy(alpha = 0.8f) ) },
-                    modifier = Modifier.clickable { onNavigateToManageCategories() }
+                    headlineContent = {
+                        Text(
+                            text = stringResource(R.string.biometric_auth),
+                            color = if (viewModel.isBiometricHardwareAvailable) Color.Unspecified else Color.Gray
+                        )
+                    },
+                    supportingContent = {
+                        Text(
+                            text = if (viewModel.isBiometricHardwareAvailable)
+                                stringResource(R.string.biometric_desc)
+                            else
+                                stringResource(R.string.biometric_enable)
+                        )
+                    },
+                    leadingContent = {
+                        Icon(
+                            Icons.Default.Fingerprint,
+                            null,
+                            tint = if (viewModel.isBiometricHardwareAvailable) MaterialTheme.colorScheme.primary else Color.Gray
+                        )
+                    },
+                    trailingContent = {
+                        Switch(
+                            checked = viewModel.isBiometricEnabled,
+                            onCheckedChange = { viewModel.toggleBiometric(it) },
+                            enabled = viewModel.isBiometricHardwareAvailable
+                        )
+                    }
                 )
             }
         }
 
-        // 3. СЕКЦИЯ: ЯЗЫК
+        // 4. СЕКЦИЯ: ЯЗЫК
         item {
             Text(
                 text = stringResource(R.string.language),
@@ -110,7 +158,7 @@ fun SettingsScreen(
         }
 
 
-        // 4. СЕКЦИЯ ВАЛЮТЫ
+        // 5. СЕКЦИЯ ВАЛЮТЫ
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Text(

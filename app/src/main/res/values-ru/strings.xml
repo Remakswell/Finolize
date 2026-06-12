@@ -58,5 +58,9 @@
     <string name="total_history">Итого за всё время</string>
     <string name="total_for">Всего по категории %1$s</string>
     <string name="version">Версия</string>
+    <string name="security">Безопасность</string>
     <string name="category_exists">Эта категория уже существует</string>
+    <string name="biometric_auth">Биометрическая блокировка</string>
+    <string name="biometric_desc">Защитите свои данные с помощью идентификации по отпечатку пальца или лицу</string>
+    <string name="biometric_enable">Для активации настройте PIN-код или биометрическую идентификацию в настройках телефона.</string>
 </resources>
