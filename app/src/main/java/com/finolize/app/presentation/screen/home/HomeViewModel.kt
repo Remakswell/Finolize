@@ -21,7 +21,8 @@ data class HomeUiState(
     val expenses: List<ExpenseEntity> = emptyList(),
     val categories: List<CategoryEntity> = emptyList(),
     val totalBalance: Double = 0.0,
-    val currency: String = "$"
+    val currency: String = "$",
+    val isLoading: Boolean = true
 )
 
 @HiltViewModel
@@ -46,7 +47,8 @@ class HomeViewModel @Inject constructor(
                 expenses = todayExpenses,
                 categories = categories,
                 totalBalance = todayExpenses.sumOf { it.amount },
-                currency = currency
+                currency = currency,
+                isLoading = false
             )
         }
         .stateIn(

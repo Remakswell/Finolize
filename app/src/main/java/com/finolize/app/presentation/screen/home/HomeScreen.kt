@@ -3,40 +3,24 @@ package com.finolize.app.presentation.screen.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.collectAsState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,7 +34,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import androidx.core.graphics.toColorInt
-
+import com.finolize.app.core.utils.shimmerEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,6 +49,8 @@ fun HomeScreen(
         SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date())
     }
 
+    val cardHeight = 132.dp
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -72,7 +58,7 @@ fun HomeScreen(
             .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
-        // 1. Заголовок "Сегодня" + дата
+        // 1. Заголовок (дата)
         item {
             Column(modifier = Modifier.padding(vertical = 16.dp)) {
                 Text(
@@ -88,33 +74,57 @@ fun HomeScreen(
             }
         }
 
-        // 2. Карточка расходов (за сегодня)
+        // 2. Блок баланса (Шиммер или Реальная карточка)
         item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(28.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-            ) {
-                Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = stringResource(R.string.todays_expenses).uppercase(),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f)
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = "${state.currency}${String.format("%.2f", state.totalBalance)}",
-                        style = MaterialTheme.typography.displayMedium,
-                        fontWeight = FontWeight.Black,
-                        color = MaterialTheme.colorScheme.onErrorContainer
-                    )
+            if (state.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(cardHeight)
+                        .clip(RoundedCornerShape(28.dp))
+                        .shimmerEffect()
+                )
+            } else {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = cardHeight),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                ) {
+                    Column(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp)) {
+                        Text(
+                            text = stringResource(R.string.todays_expenses).uppercase(),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(start = 48.dp)
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            text = "${state.currency}${
+                                String.format(
+                                    Locale.getDefault(),
+                                    "%.2f",
+                                    state.totalBalance
+                                )
+                            }",
+                            style = MaterialTheme.typography.displayMedium,
+                            fontWeight = FontWeight.Black,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            modifier = Modifier.align(Alignment.Start)
+                        )
+                    }
                 }
             }
-            Spacer(Modifier.height(32.dp))
         }
 
-        // 3. Заголовок "История за сегодня"
+        // 3. Заголовок истории
         item {
+            Spacer(Modifier.height(32.dp))
             Text(
                 text = stringResource(R.string.today_history),
                 style = MaterialTheme.typography.titleMedium,
@@ -125,8 +135,19 @@ fun HomeScreen(
             )
         }
 
-        // 4. Список трат за сегодня или заглушка
-        if (state.expenses.isEmpty()) {
+        // 4. Список трат (Шиммер или Реальный список)
+        if (state.isLoading) {
+            items(3) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp)
+                        .padding(vertical = 8.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .shimmerEffect()
+                )
+            }
+        } else if (state.expenses.isEmpty()) {
             item {
                 Column(
                     modifier = Modifier
@@ -146,7 +167,6 @@ fun HomeScreen(
             }
         } else {
             items(items = state.expenses, key = { it.id }) { expense ->
-                // Находим информацию о категории для текущего расхода
                 val categoryInfo = state.categories.find { it.name == expense.category }
                 val icon = IconMapper.getIconByName(categoryInfo?.iconName ?: "Category")
                 val color = categoryInfo?.let { Color(it.colorHex.toColorInt()) } ?: Color.Gray
@@ -164,12 +184,13 @@ fun HomeScreen(
                     state = dismissState,
                     enableDismissFromStartToEnd = false,
                     backgroundContent = {
-                        val color = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart)
-                            MaterialTheme.colorScheme.errorContainer else Color.Transparent
+                        val bgColor =
+                            if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart)
+                                MaterialTheme.colorScheme.errorContainer else Color.Transparent
                         Box(
                             Modifier
                                 .fillMaxSize()
-                                .background(color, RoundedCornerShape(12.dp))
+                                .background(bgColor, RoundedCornerShape(12.dp))
                                 .padding(horizontal = 20.dp),
                             contentAlignment = Alignment.CenterEnd
                         ) {
@@ -178,11 +199,13 @@ fun HomeScreen(
                     }
                 ) {
                     ExpenseItem(
-                        modifier = Modifier.clickable { navController.navigate("add_expense?expenseId=${expense.id}") },
+                        modifier = Modifier.clickable {
+                            navController.navigate("add_expense?expenseId=${expense.id}")
+                        },
                         categoryName = expense.category,
                         categoryIcon = icon,
                         categoryColor = color,
-                        amount = String.format("%.2f", expense.amount),
+                        amount = String.format(Locale.getDefault(), "%.2f", expense.amount),
                         timestamp = expense.timestamp,
                         description = expense.description,
                         currency = state.currency
@@ -192,15 +215,13 @@ fun HomeScreen(
         }
     }
 
-    // Диалог удаления
     if (expenseToDelete != null) {
         DeleteDialog(
             onConfirm = {
-                expenseToDelete?.let {
-                    viewModel.deleteExpense(it)
-                }
+                expenseToDelete?.let { viewModel.deleteExpense(it) }
                 expenseToDelete = null
             },
-            onDismiss = { expenseToDelete = null })
+            onDismiss = { expenseToDelete = null }
+        )
     }
 }
