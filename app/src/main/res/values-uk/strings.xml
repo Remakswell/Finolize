@@ -63,6 +63,14 @@
     <string name="biometric_auth">Біометричний замок</string>
     <string name="biometric_desc">Захистіть свої дані за допомогою відбитка пальця або ідентифікації обличчя</string>
     <string name="biometric_enable">Налаштуйте PIN-код або біометричні дані в налаштуваннях телефону, щоб увімкнути</string>
+    <string name="onboarding_title_1">Ласкаво просимо до Finolize</string>
+    <string name="onboarding_desc_1">Ваш персональний помічник у світі фінансів. Контролюйте витрати легко та просто.</string>
+    <string name="onboarding_title_2">Аналізуйте витрати</string>
+    <string name="onboarding_desc_2">Наочна історія та статистика допоможуть вам зрозуміти, куди йдуть ваші гроші.</string>
+    <string name="onboarding_title_3">Повна приватність</string>
+    <string name="onboarding_desc_3">Ваші дані зберігаються виключно на вашому пристрої. Ми не збираємо та не передаємо вашу фінансову інформацію нікуди.</string>
+    <string name="onboarding_next">Далі</string>
+    <string name="onboarding_start">Почати</string>
 
 
 </resources>

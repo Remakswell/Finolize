@@ -63,4 +63,12 @@
     <string name="biometric_auth">Биометрическая блокировка</string>
     <string name="biometric_desc">Защитите свои данные с помощью идентификации по отпечатку пальца или лицу</string>
     <string name="biometric_enable">Для активации настройте PIN-код или биометрическую идентификацию в настройках телефона.</string>
+    <string name="onboarding_title_1">Добро пожаловать в Finolize</string>
+    <string name="onboarding_desc_1">Ваш персональный помощник в мире финансов. Контролируйте расходы легко и просто.</string>
+    <string name="onboarding_title_2">Анализируйте траты</string>
+    <string name="onboarding_desc_2">Наглядные история и статистика помогут вам понять, куда уходят ваши деньги.</string>
+    <string name="onboarding_title_3">Полная приватность</string>
+    <string name="onboarding_desc_3">Ваши данные хранятся исключительно на вашем устройстве. Мы не собираем и не передаем вашу финансовую информацию никуда.</string>
+    <string name="onboarding_next">Далее</string>
+    <string name="onboarding_start">Начать</string>
 </resources>

@@ -62,6 +62,14 @@
     <string name="biometric_auth">Biometric Lock</string>
     <string name="biometric_desc">Protect your data with fingerprint or face ID</string>
     <string name="biometric_enable">Set up PIN or Biometrics in phone settings to enable</string>
+    <string name="onboarding_title_1">Welcome to Finolize</string>
+    <string name="onboarding_desc_1">Your personal financial assistant. Track expenses easily and simply.</string>
+    <string name="onboarding_title_2">Analyze Spending</string>
+    <string name="onboarding_desc_2">Visual history and statistics will help you understand where your money goes.</string>
+    <string name="onboarding_title_3">Complete Privacy</string>
+    <string name="onboarding_desc_3">Your data is stored exclusively on your device. We do not collect or transfer your financial information anywhere.</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_start">Start</string>
 
 
 </resources>

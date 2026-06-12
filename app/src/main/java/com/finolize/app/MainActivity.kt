@@ -39,6 +39,7 @@ import com.finolize.app.presentation.screen.categories.AddCategoryScreen
 import com.finolize.app.presentation.screen.categories.ManageCategoriesScreen
 import com.finolize.app.presentation.screen.history.HistoryScreen
 import com.finolize.app.presentation.screen.home.HomeScreen
+import com.finolize.app.presentation.screen.onboarding.OnboardingScreen
 import com.finolize.app.presentation.screen.settings.SettingsScreen
 import com.finolize.app.presentation.screen.stats.StatsScreen
 import com.finolize.app.ui.theme.FinolizeTheme
@@ -52,9 +53,12 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var preferenceManager: PreferenceManager
 
     private var isUnlocked by mutableStateOf(false)
+    private var showOnboarding by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        showOnboarding = preferenceManager.isFirstRun()
 
         val biometricEnabledInApp = preferenceManager.isBiometricEnabled()
         val canAuthenticate = BiometricHelper.canAuthenticate(this)
@@ -79,7 +83,12 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             FinolizeTheme {
-                if (isUnlocked) {
+                if (showOnboarding) {
+                    OnboardingScreen(onFinished = {
+                        preferenceManager.setFirstRun(false)
+                        showOnboarding = false
+                    })
+                } else if (isUnlocked) {
                     val navController = rememberNavController()
                     FinolizeAppContent(navController)
                 }

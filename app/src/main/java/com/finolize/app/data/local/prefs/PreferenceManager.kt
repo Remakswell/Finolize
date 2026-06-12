@@ -20,6 +20,12 @@ class PreferenceManager @Inject constructor(context: Context) {
     private val _biometricFlow = MutableStateFlow(prefs.getBoolean("biometric_enabled", false))
     val biometricFlow: StateFlow<Boolean> = _biometricFlow
 
+    fun isFirstRun(): Boolean = prefs.getBoolean("is_first_run", true)
+
+    fun setFirstRun(isFirstRun: Boolean) {
+        prefs.edit { putBoolean("is_first_run", isFirstRun) }
+    }
+
     fun getCurrency(): String = _currencyFlow.value
 
     fun setCurrency(currency: String) {
