@@ -78,4 +78,10 @@ class AddExpenseViewModel @Inject constructor(
             onSuccess()
         }
     }
+
+    fun onDescriptionChange(newDescription: String) {
+        if (newDescription.length <= 100) {
+            description = newDescription
+        }
+    }
 }

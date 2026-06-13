@@ -92,12 +92,9 @@ fun AddExpenseScreen(
                 value = viewModel.amount,
                 onValueChange = { input ->
                     val filtered = input.replace(",", ".")
-                    val regex = Regex("""^\d{0,6}(\.\d{0,2})?$""")
+                    val regex = Regex("""^\d{0,8}(\.\d{0,2})?$""")
                     if (filtered.isEmpty() || filtered.matches(regex)) {
-                        val doubleValue = filtered.toDoubleOrNull() ?: 0.0
-                        if (doubleValue <= 1000000.0) {
-                            viewModel.amount = filtered
-                        }
+                        viewModel.amount = filtered
                     }
                 },
                 label = { Text(stringResource(R.string.enter_amount)) },
@@ -110,10 +107,17 @@ fun AddExpenseScreen(
             // 2. Поле ввода описания
             OutlinedTextField(
                 value = viewModel.description,
-                onValueChange = { viewModel.description = it },
+                onValueChange = { viewModel.onDescriptionChange(it) },
                 label = { Text(stringResource(R.string.description)) },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+                supportingText = {
+                    Text(
+                        text = "${viewModel.description.length} / 100",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.End
+                    )
+                }
             )
 
             // 3. Выбор даты и времени

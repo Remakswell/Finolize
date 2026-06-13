@@ -64,7 +64,9 @@ class HistoryViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HistoryUiState())
 
     fun onSearchQueryChange(query: String) {
-        _searchQuery.value = query
+        if (query.length <= 50) {
+            _searchQuery.value = query
+        }
     }
 
     fun onCategorySelect(category: String?) {

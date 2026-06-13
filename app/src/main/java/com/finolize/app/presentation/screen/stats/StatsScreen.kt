@@ -18,11 +18,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.finolize.app.R
 import com.finolize.app.presentation.components.PieChart
+import kotlin.math.roundToInt
 
 @Composable
 fun StatsScreen(
@@ -43,7 +45,10 @@ fun StatsScreen(
             text = stringResource(R.string.nav_stats),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Black,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            textAlign = TextAlign.Start
         )
 
         // 2. Переключатель периодов (Tabs)
@@ -81,16 +86,19 @@ fun StatsScreen(
         } else {
             // 3. График с суммой в центре
             Box(
-                contentAlignment = Alignment.Center, // Центрируем всё внутри
+                contentAlignment = Alignment.Center,
                 modifier = Modifier.padding(vertical = 32.dp)
             ) {
                 PieChart(
                     stats = state.stats,
-                    modifier = Modifier.size(220.dp) // Чуть увеличим
+                    modifier = Modifier.size(220.dp)
                 )
 
                 // ВЫВОДИМ СУММУ В ЦЕНТРЕ
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.width(150.dp)
+                ) {
                     Text(
                         text = stringResource(R.string.total),
                         style = MaterialTheme.typography.labelMedium,
@@ -99,7 +107,8 @@ fun StatsScreen(
                     Text(
                         text = "${state.currency}${String.format("%.2f", state.totalAmount)}",
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Black
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -133,7 +142,7 @@ fun StatItem(stat: com.finolize.app.domain.usecase.CategoryStat, currency: Strin
         Text(text = stat.categoryName, modifier = Modifier.weight(1f))
         Column(horizontalAlignment = Alignment.End) {
             Text(text = "${currency}${String.format("%.2f", stat.amount)}", fontWeight = FontWeight.Bold)
-            Text(text = "${(stat.percentage * 100).toInt()}%", fontSize = 12.sp, color = Color.Gray)
+            Text(text = "${(stat.percentage * 100).roundToInt()}%", fontSize = 12.sp, color = Color.Gray)
         }
     }
 }
