@@ -40,7 +40,7 @@ fun SettingsScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // 1. ЗАГОЛОВОК
+        // 1. Title
         item {
             Text(
                 text = stringResource(R.string.nav_settings),
@@ -50,7 +50,7 @@ fun SettingsScreen(
             )
         }
 
-        // 2. СЕКЦИЯ "GENERAL"
+        // 2. Section "GENERAL"
         item {
             Text(
                 text = stringResource(R.string.general),
@@ -62,7 +62,7 @@ fun SettingsScreen(
                 shape = MaterialTheme.shapes.medium
             ) {
                 Column {
-                    // ПУНКТ: КАТЕГОРИИ
+                    // Item: Categories
                     ListItem(
                         headlineContent = { Text(stringResource(R.string.manage_categories)) },
                         leadingContent = { Icon(Icons.Default.Category, null, tint = MaterialTheme.colorScheme.primary) },
@@ -75,7 +75,7 @@ fun SettingsScreen(
             }
         }
 
-        // 3. СЕКЦИЯ "SECURITY"
+        // 3. Section "SECURITY"
         item {
             Text(
                 text = stringResource(R.string.security),
@@ -119,7 +119,7 @@ fun SettingsScreen(
             }
         }
 
-        // 4. СЕКЦИЯ: ЯЗЫК
+        // 4. Section: Language
         item {
             Text(
                 text = stringResource(R.string.language),
@@ -158,7 +158,7 @@ fun SettingsScreen(
         }
 
 
-        // 5. СЕКЦИЯ ВАЛЮТЫ
+        // 5. Section: Currency
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -172,7 +172,6 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium
             ) {
-                // Прямо внутри айтема выводим список валют
                 currencies.forEachIndexed { index, currency ->
                     Row(
                         modifier = Modifier
@@ -195,7 +194,6 @@ fun SettingsScreen(
                             onClick = { viewModel.updateCurrency(currency) }
                         )
                     }
-                    // Добавляем разделитель между валютами, кроме последней
                     if (index < currencies.lastIndex) {
                         HorizontalDivider(
                             modifier = Modifier.padding(horizontal = 16.dp),

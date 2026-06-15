@@ -51,7 +51,7 @@ fun ExpenseItem(
                 .padding(vertical = 12.dp, horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Иконка категории
+            // Category icon
             Box(
                 modifier = Modifier
                     .size(48.dp)
@@ -65,14 +65,14 @@ fun ExpenseItem(
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                // 1. Категория
+                // 1. Category
                 Text(
                     text = categoryName,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
                 )
 
-                // 2. Описание (показываем, только если оно не пустое)
+                // 2. Description (show only if it is not empty)
                 if (description.isNotBlank()) {
                     Text(
                         text = description,
@@ -83,7 +83,7 @@ fun ExpenseItem(
                     )
                 }
 
-                // 3. Дата
+                // 3. Date
                 Text(
                     text = timestamp.toFormattedTimeOnly(),
                     color = Color.Gray,
@@ -91,7 +91,7 @@ fun ExpenseItem(
                 )
             }
 
-            // Сумма
+            // Amount
             Text(
                 text = "-$currency$amount",
                 fontWeight = FontWeight.Bold,

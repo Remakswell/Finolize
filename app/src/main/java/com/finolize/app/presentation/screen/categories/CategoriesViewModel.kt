@@ -31,7 +31,7 @@ class CategoriesViewModel @Inject constructor(private val repository: ExpenseRep
     fun addCategory(name: String, icon: String, color: String, onSuccess: () -> Unit) {
         if (isSaving) return
         val trimmedName = name.trim()
-        // ПРОВЕРКА НА ДУБЛИКАТ (без учета регистра)
+        // Check for duplicate (case-insensitive)
         val exists = categories.value.any { it.name.equals(trimmedName, ignoreCase = true) }
 
         if (exists) {
@@ -58,7 +58,7 @@ class CategoriesViewModel @Inject constructor(private val repository: ExpenseRep
         if (isSaving) return
         val trimmedName = name.trim()
 
-        // Проверка на дубликат только если имя изменилось
+        // Check for duplicates only if the name has changed
         if (!trimmedName.equals(oldName, ignoreCase = true)) {
             val exists = categories.value.any { it.name.equals(trimmedName, ignoreCase = true) }
             if (exists) {

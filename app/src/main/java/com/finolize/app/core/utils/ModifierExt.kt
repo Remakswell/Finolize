@@ -26,8 +26,6 @@ fun Modifier.shimmerEffect(): Modifier = composed {
         label = "shimmer"
     )
 
-    // Используем onSurface (текстовый цвет) с очень низкой прозрачностью.
-    // Это создаст эффект легкой серой заливки, которая не "кричит".
     val baseColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
     val highlightColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
 

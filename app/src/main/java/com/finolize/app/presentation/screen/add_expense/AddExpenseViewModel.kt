@@ -27,7 +27,6 @@ class AddExpenseViewModel @Inject constructor(
     private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
-    // Состояния для полей ввода (переносим из Screen во ViewModel)
     var amount by mutableStateOf("")
     var description by mutableStateOf("")
     var selectedCategoryName by mutableStateOf("General")
@@ -36,7 +35,6 @@ class AddExpenseViewModel @Inject constructor(
     private var editingId: Long? = null
     val categories = repository.getAllCategories()
         .map { list ->
-            // Сортируем: сначала системные (isSystem == true), потом по алфавиту
             list.sortedWith(compareByDescending<CategoryEntity> { it.isSystem }.thenBy { it.name })
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -46,7 +44,7 @@ class AddExpenseViewModel @Inject constructor(
         private set
 
     fun loadExpense(id: Long) {
-        if (id == -1L || isEditing) return // Если уже загрузили или ID пустой
+        if (id == -1L || isEditing) return // If you have already downloaded it or the ID is empty
         viewModelScope.launch {
             getExpenseByIdUseCase(id)?.let { expense ->
                 isEditing = true
@@ -68,7 +66,7 @@ class AddExpenseViewModel @Inject constructor(
         viewModelScope.launch {
             isSaving = true
             val expense = ExpenseEntity(
-                id = editingId ?: 0, // Если редактируем, используем старый ID
+                id = editingId ?: 0, // If we edit, we use the old ID
                 amount = amountDouble,
                 category = selectedCategoryName,
                 description = description,

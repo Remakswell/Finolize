@@ -33,7 +33,6 @@ class HomeViewModel @Inject constructor(
     private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
-    // Подписываемся на изменения в базе данных
     val state: StateFlow<HomeUiState> = combine(
         getExpensesUseCase(),
         repository.getAllCategories(),

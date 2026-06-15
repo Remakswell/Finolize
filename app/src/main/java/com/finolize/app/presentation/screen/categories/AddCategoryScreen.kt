@@ -46,22 +46,22 @@ fun AddCategoryScreen(
     )
 
     val colors = listOf(
-        Color(0xFFF44336), // Красный
-        Color(0xFF2196F3), // Синий
-        Color(0xFF4CAF50), // Зеленый
-        Color(0xFFFFEB3B), // Желтый
-        Color(0xFFFF9800), // Оранжевый
-        Color(0xFF9C27B0), // Фиолетовый
-        Color(0xFFE91E63), // Розовый
-        Color(0xFF03A9F4), // Голубой
-        Color(0xFF795548), // Коричневый
-        Color(0xFF9E9E9E), // Серый
-        Color(0xFF009688), // Бирюзовый
-        Color(0xFF8BC34A), // Салатовый
-        Color(0xFF3F51B5), // Темно-синий (Индиго)
-        Color(0xFFCDDC39), // Лайм
-        Color(0xFFFF5722), // Темно-оранжевый
-        Color(0xFF333333)  // Черный
+        Color(0xFFF44336),
+        Color(0xFF2196F3),
+        Color(0xFF4CAF50),
+        Color(0xFFFFEB3B),
+        Color(0xFFFF9800),
+        Color(0xFF9C27B0),
+        Color(0xFFE91E63),
+        Color(0xFF03A9F4),
+        Color(0xFF795548),
+        Color(0xFF9E9E9E),
+        Color(0xFF009688),
+        Color(0xFF8BC34A),
+        Color(0xFF3F51B5),
+        Color(0xFFCDDC39),
+        Color(0xFFFF5722),
+        Color(0xFF333333)
     )
 
     var name by remember { mutableStateOf("") }
@@ -103,7 +103,7 @@ fun AddCategoryScreen(
                 .fillMaxSize()
                 .navigationBarsPadding()
         ) {
-            // КОНТЕНТ СО СКРОЛЛОМ
+            // SCROLLABLE CONTENT
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -146,7 +146,7 @@ fun AddCategoryScreen(
                     fontWeight = FontWeight.Bold
                 )
 
-                // Сетка иконок через Row (по 4 в ряд)
+                // Grid of icons by Row (4 per row)
                 icons.chunked(4).forEach { rowIcons ->
                     Row(
                         modifier = Modifier
@@ -215,7 +215,7 @@ fun AddCategoryScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // КНОПКА СОЗДАТЬ
+            // CREATE BUTTON
             Button(
                 onClick = {
                     val colorHex = String.format("#%06X", (0xFFFFFF and selectedColor.toArgb()))

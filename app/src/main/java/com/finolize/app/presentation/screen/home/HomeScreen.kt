@@ -58,7 +58,7 @@ fun HomeScreen(
             .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
-        // 1. Заголовок (дата)
+        // 1. Title (date)
         item {
             Column(modifier = Modifier.padding(vertical = 16.dp)) {
                 Text(
@@ -74,7 +74,7 @@ fun HomeScreen(
             }
         }
 
-        // 2. Блок баланса (Шиммер или Реальная карточка)
+        // 2. Balance Block (Shimmer or Real Card)
         item {
             if (state.isLoading) {
                 Box(
@@ -121,7 +121,7 @@ fun HomeScreen(
             }
         }
 
-        // 3. Заголовок истории
+        // 3. Story title
         item {
             Spacer(Modifier.height(32.dp))
             Text(
@@ -134,7 +134,7 @@ fun HomeScreen(
             )
         }
 
-        // 4. Список трат (Шиммер или Реальный список)
+        // 4. Expense List (Shimmer or Real List)
         if (state.isLoading) {
             items(3) {
                 Box(

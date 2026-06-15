@@ -87,7 +87,7 @@ fun AddExpenseScreen(
                 .navigationBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 1. Поле ввода суммы
+            // 1. Amount input field
             OutlinedTextField(
                 value = viewModel.amount,
                 onValueChange = { input ->
@@ -104,7 +104,7 @@ fun AddExpenseScreen(
                 prefix = { Text("${viewModel.currency} ") }
             )
 
-            // 2. Поле ввода описания
+            // 2. Description input field
             OutlinedTextField(
                 value = viewModel.description,
                 onValueChange = { viewModel.onDescriptionChange(it) },
@@ -120,12 +120,12 @@ fun AddExpenseScreen(
                 }
             )
 
-            // 3. Выбор даты и времени
+            // 3. Select date and time
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Карточка Даты
+                // Date Card
                 OutlinedCard(
                     onClick = { showDatePicker = true },
                     modifier = Modifier.weight(1f),
@@ -144,7 +144,7 @@ fun AddExpenseScreen(
                     }
                 }
 
-                // Карточка Времени
+                // Time Card
                 OutlinedCard(
                     onClick = { showTimePicker = true },
                     modifier = Modifier.weight(0.6f),
@@ -164,7 +164,7 @@ fun AddExpenseScreen(
                 }
             }
 
-            // 4. Выбор категории
+            // 4. Select category
             Text(stringResource(R.string.category), style = MaterialTheme.typography.titleMedium)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(categories) { category -> // Используем список из базы!
@@ -195,7 +195,7 @@ fun AddExpenseScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // 5. Кнопка сохранения
+            // 5. Save button
             Button(
                 onClick = {
                     viewModel.saveExpense(onSuccess = { onNavigateBack() })
@@ -208,7 +208,7 @@ fun AddExpenseScreen(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 if (viewModel.isSaving) {
-                    // Вместо текста показываем крутилку
+                    // Instead of text, we show a spinner
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -222,7 +222,7 @@ fun AddExpenseScreen(
         }
     }
 
-    // Диалог выбора даты
+    // Date selection dialog
     if (showDatePicker) {
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
@@ -253,7 +253,7 @@ fun AddExpenseScreen(
         }
     }
 
-    // Диалог выбора времени
+    // Time selection dialogue
     if (showTimePicker) {
         TimePickerDialog(
             onDismissRequest = { showTimePicker = false },

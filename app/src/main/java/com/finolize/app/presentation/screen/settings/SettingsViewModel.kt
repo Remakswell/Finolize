@@ -32,7 +32,6 @@ class SettingsViewModel @Inject constructor(
     init {
         isBiometricHardwareAvailable = BiometricHelper.canAuthenticate(application)
 
-        // Если вдруг биометрия была включена, но пользователь убрал пароль с телефона — выключаем
         if (!isBiometricHardwareAvailable && isBiometricEnabled) {
             toggleBiometric(false)
         }

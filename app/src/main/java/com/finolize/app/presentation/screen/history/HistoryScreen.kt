@@ -43,7 +43,7 @@ fun HistoryScreen(
             .fillMaxSize()
             .padding(paddingValues)
     ) {
-        // 1. Заголовок
+        // 1. Headline
         Text(
             text = stringResource(R.string.nav_history),
             style = MaterialTheme.typography.titleLarge,
@@ -51,7 +51,7 @@ fun HistoryScreen(
             modifier = Modifier.padding(16.dp)
         )
 
-        // 2. Поле Поиска
+        // 2. Search Field
         OutlinedTextField(
             value = state.searchQuery,
             onValueChange = { viewModel.onSearchQueryChange(it) },
@@ -64,7 +64,7 @@ fun HistoryScreen(
             singleLine = true
         )
 
-        // 3. Фильтр по категориям
+        // 3. Filter by categories
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -78,7 +78,7 @@ fun HistoryScreen(
             }
         }
 
-        // 5. Список транзакций с группировкой и удалением
+        // 5. List of transactions with grouping and deletion
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 16.dp)
@@ -185,7 +185,7 @@ fun HistoryScreen(
         }
     }
 
-    // Диалог подтверждения удаления
+    // Delete confirmation dialog
     if (expenseToDelete != null) {
         DeleteDialog(
             onConfirm = {

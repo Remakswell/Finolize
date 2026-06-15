@@ -24,7 +24,7 @@ fun PieChart(
                     startAngle = startAngle,
                     sweepAngle = sweepAngle,
                     useCenter = false,
-                    style = Stroke(width = 40f) // Делаем "пончик" (Donut Chart)
+                    style = Stroke(width = 40f) // Making a Donut (Donut Chart)
                 )
                 startAngle += sweepAngle
             }

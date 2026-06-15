@@ -51,7 +51,7 @@ fun StatsScreen(
             textAlign = TextAlign.Start
         )
 
-        // 2. Переключатель периодов (Tabs)
+        // 2. Period Switch (Tabs)
         TabRow(
             selectedTabIndex = state.selectedPeriod.ordinal,
             containerColor = Color.Transparent,
@@ -84,7 +84,7 @@ fun StatsScreen(
                 Text(text = stringResource(R.string.no_expenses_for_this_period), color = Color.Gray)
             }
         } else {
-            // 3. График с суммой в центре
+            // 3. Graph with sum in the center
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.padding(vertical = 32.dp)
@@ -94,7 +94,6 @@ fun StatsScreen(
                     modifier = Modifier.size(220.dp)
                 )
 
-                // ВЫВОДИМ СУММУ В ЦЕНТРЕ
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.width(150.dp)
@@ -113,7 +112,7 @@ fun StatsScreen(
                 }
             }
 
-            // 4. Список категорий
+            // 4. List of categories
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
