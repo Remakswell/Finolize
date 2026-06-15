@@ -109,8 +109,8 @@ fun HomeScreen(
                                     state.totalBalance
                                 )
                             }",
-                            style = MaterialTheme.typography.displayMedium,
-                            fontWeight = FontWeight.Black,
+                            style = MaterialTheme.typography.displaySmall,
+                            fontWeight = FontWeight.Bold,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             color = MaterialTheme.colorScheme.onErrorContainer,
