@@ -58,6 +58,11 @@
     <string name="lang_en">English</string>
     <string name="lang_ru">Русский</string>
     <string name="lang_uk">Українська</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_pt">Português</string>
+    <string name="lang_pl">Polski</string>
     <string name="total_history">Итого за всё время</string>
     <string name="total_for">Всего по категории %1$s</string>
     <string name="version">Версия</string>

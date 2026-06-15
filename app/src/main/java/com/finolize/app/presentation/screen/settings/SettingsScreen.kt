@@ -27,8 +27,17 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
 
-    val currencies = listOf("$", "€", "₴", "₽")
-    val languages = listOf("en" to R.string.lang_en, "ru" to R.string.lang_ru, "uk" to R.string.lang_uk)
+    val currencies = listOf("$", "€", "₴", "₽", "zł", "R$")
+    val languages = listOf(
+        "en" to R.string.lang_en,
+        "ru" to R.string.lang_ru,
+        "uk" to R.string.lang_uk,
+        "es" to R.string.lang_es,
+        "de" to R.string.lang_de,
+        "fr" to R.string.lang_fr,
+        "pt" to R.string.lang_pt,
+        "pl" to R.string.lang_pl,
+    )
 
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     val versionName = packageInfo.versionName ?: "1.0.0"
@@ -58,7 +67,9 @@ fun SettingsScreen(
                 color = MaterialTheme.colorScheme.primary
             )
             Card(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
                 Column {
@@ -83,7 +94,9 @@ fun SettingsScreen(
                 color = MaterialTheme.colorScheme.primary
             )
             Card(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
                 ListItem(
@@ -129,7 +142,9 @@ fun SettingsScreen(
         }
         item {
             Card(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
                 languages.forEachIndexed { index, (code, nameRes) ->
@@ -186,6 +201,8 @@ fun SettingsScreen(
                                 "€" -> "EUR (€)"
                                 "₴" -> "UAH (₴)"
                                 "₽" -> "RUB (₽)"
+                                "zł" -> "PLN (zł)"
+                                "R$" -> "BRL (R$)"
                                 else -> currency
                             }
                         )
