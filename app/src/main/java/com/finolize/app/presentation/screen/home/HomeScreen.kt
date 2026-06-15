@@ -90,7 +90,7 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .heightIn(min = cardHeight),
                     shape = RoundedCornerShape(28.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                 ) {
                     Column(modifier = Modifier
                         .fillMaxWidth()
@@ -98,7 +98,7 @@ fun HomeScreen(
                         Text(
                             text = stringResource(R.string.todays_expenses).uppercase(),
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f)
+                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                         )
                         Spacer(Modifier.height(8.dp))
                         Text(
@@ -113,7 +113,7 @@ fun HomeScreen(
                             fontWeight = FontWeight.Bold,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.align(Alignment.Start)
                         )
                     }

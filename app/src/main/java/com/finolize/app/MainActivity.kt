@@ -123,9 +123,7 @@ class MainActivity : AppCompatActivity() {
             floatingActionButton = {
                 AnimatedVisibility(visible = !isFullScreen && currentRoute == Screen.Home.route, enter = scaleIn(), exit = scaleOut()) {
                     FloatingActionButton(
-                        onClick = { navController.navigate("add_expense") },
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        onClick = { navController.navigate("add_expense") }
                     ) { Icon(Icons.Default.Add, "Add") }
                 }
             }

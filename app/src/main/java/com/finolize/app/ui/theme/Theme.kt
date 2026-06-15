@@ -11,15 +11,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Steel80,
+    secondary = SlateGrey80,
+    tertiary = Graphite80,
+    secondaryContainer = SlateGrey30,
+    onSecondaryContainer = Steel90,
+    primaryContainer = Steel30,
+    onPrimaryContainer = Steel90
 )
 
+
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Steel40,
+    secondary = SlateGrey40,
+    tertiary = Graphite40,
+    secondaryContainer = Steel90,
+    onSecondaryContainer = Steel10,
+    primaryContainer = Steel90,
+    onPrimaryContainer = Steel10
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

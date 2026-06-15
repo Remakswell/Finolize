@@ -64,10 +64,10 @@ fun SettingsScreen(
                 Column {
                     // ПУНКТ: КАТЕГОРИИ
                     ListItem(
-                        headlineContent = { Text(stringResource(R.string.manage_categories), fontWeight = FontWeight.Medium) },
+                        headlineContent = { Text(stringResource(R.string.manage_categories)) },
                         leadingContent = { Icon(Icons.Default.Category, null, tint = MaterialTheme.colorScheme.primary) },
                         trailingContent = {
-                            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = Color.White.copy(alpha = 0.8f))
+                            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         },
                         modifier = Modifier.clickable { onNavigateToManageCategories() }
                     )
