@@ -14,4 +14,5 @@ interface ExpenseRepository {
     fun getAllCategories(): Flow<List<CategoryEntity>>
     suspend fun insertCategory(category: CategoryEntity)
     suspend fun deleteCategory(category: CategoryEntity)
+    suspend fun updateCategory(oldName: String, category: CategoryEntity)
 }

@@ -29,6 +29,7 @@
     <string name="yesterday">Вчера</string>
     <string name="today_history">История за сегодня</string>
     <string name="new_category">Новая категория</string>
+    <string name="edit_category">Обновить категорию</string>
     <string name="category_name">Название категории</string>
     <string name="select_icon">Выберите иконку</string>
     <string name="select_color">Выберите цвет</string>
@@ -71,4 +72,5 @@
     <string name="onboarding_desc_3">Ваши данные хранятся исключительно на вашем устройстве. Мы не собираем и не передаем вашу финансовую информацию никуда.</string>
     <string name="onboarding_next">Далее</string>
     <string name="onboarding_start">Начать</string>
+    <string name="edit">Обновить</string>
 </resources>

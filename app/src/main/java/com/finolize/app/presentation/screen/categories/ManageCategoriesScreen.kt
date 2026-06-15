@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,12 +25,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.finolize.app.R
 import com.finolize.app.core.utils.IconMapper
 import com.finolize.app.data.local.entity.CategoryEntity
+import androidx.core.graphics.toColorInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManageCategoriesScreen(
     onNavigateBack: () -> Unit,
     onNavigateToAddCategory: () -> Unit,
+    onNavigateToEditCategory: (Long) -> Unit,
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
     val categories by viewModel.categories.collectAsState()
@@ -73,7 +76,7 @@ fun ManageCategoriesScreen(
                                 .size(40.dp)
                                 .clip(CircleShape)
                                 .background(
-                                    Color(android.graphics.Color.parseColor(category.colorHex)).copy(
+                                    Color(category.colorHex.toColorInt()).copy(
                                         alpha = 0.2f
                                     )
                                 ),
@@ -82,7 +85,7 @@ fun ManageCategoriesScreen(
                             Icon(
                                 IconMapper.getIconByName(category.iconName),
                                 null,
-                                tint = Color(android.graphics.Color.parseColor(category.colorHex))
+                                tint = Color(category.colorHex.toColorInt())
                             )
                         }
 
@@ -95,9 +98,15 @@ fun ManageCategoriesScreen(
                             fontWeight = FontWeight.Medium
                         )
 
-                        // ЛОГИКА УДАЛЕНИЯ / ЗАМОЧКА
+                        // ЛОГИКА УДАЛЕНИЯ / ОБНОВЛЕНИЯ
                         if (!category.isSystem) {
-                            // Если категория НЕ системная — показываем корзину
+                            IconButton(onClick = { onNavigateToEditCategory(category.id) }) {
+                                Icon(
+                                    Icons.Default.Edit,
+                                    contentDescription = stringResource(R.string.edit),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                             IconButton(onClick = { categoryToDelete = category }) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,

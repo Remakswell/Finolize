@@ -27,14 +27,17 @@ import androidx.compose.ui.unit.dp
 import com.finolize.app.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.finolize.app.core.utils.IconMapper
+import androidx.core.graphics.toColorInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCategoryScreen(
+    categoryId: Long = -1L,
     onNavigateBack: () -> Unit,
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
     val categories by viewModel.categories.collectAsState()
+    var oldName by remember { mutableStateOf("") }
 
     val icons = listOf(
         "ShoppingCart", "Restaurant", "Bus", "Movie", "Favorite",
@@ -68,10 +71,21 @@ fun AddCategoryScreen(
 
     val scrollState = rememberScrollState()
 
+    LaunchedEffect(categoryId, categories) {
+        if (categoryId != -1L && categories.isNotEmpty()) {
+            categories.find { it.id == categoryId }?.let { category ->
+                name = category.name
+                oldName = category.name
+                selectedIcon = category.iconName
+                selectedColor = Color(category.colorHex.toColorInt())
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.new_category)) },
+                title = { Text(if (categoryId == -1L) stringResource(R.string.new_category) else stringResource(R.string.edit_category)) },
                 navigationIcon = {
                     IconButton(onClick = {
                         if (!isNavigating) {
@@ -205,7 +219,11 @@ fun AddCategoryScreen(
             Button(
                 onClick = {
                     val colorHex = String.format("#%06X", (0xFFFFFF and selectedColor.toArgb()))
-                    viewModel.addCategory (name, selectedIcon, colorHex, onSuccess = { onNavigateBack() })
+                    if (categoryId == -1L) {
+                        viewModel.addCategory(name, selectedIcon, colorHex, onSuccess = { onNavigateBack() })
+                    } else {
+                        viewModel.updateCategory(categoryId, oldName, name, selectedIcon, colorHex, onSuccess = { onNavigateBack() })
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

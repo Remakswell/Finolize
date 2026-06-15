@@ -29,4 +29,11 @@ class ExpenseRepositoryImpl(
     override fun getAllCategories() = categoryDao.getAllCategories()
     override suspend fun insertCategory(category: CategoryEntity) = categoryDao.insertCategory(category)
     override suspend fun deleteCategory(category: CategoryEntity) = categoryDao.deleteCategory(category)
+
+    override suspend fun updateCategory(oldName: String, category: CategoryEntity) {
+        categoryDao.insertCategory(category)
+        if (oldName != category.name) {
+            dao.updateExpenseCategory(oldName, category.name)
+        }
+    }
 }

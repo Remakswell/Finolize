@@ -28,6 +28,7 @@
     <string name="yesterday">Yesterday</string>
     <string name="today_history">Today\'s History</string>
     <string name="new_category">New Category</string>
+    <string name="edit_category">Edit Category</string>
     <string name="category_name">Category Name</string>
     <string name="select_icon">Select Icon</string>
     <string name="select_color">Select Color</string>
@@ -70,6 +71,7 @@
     <string name="onboarding_desc_3">Your data is stored exclusively on your device. We do not collect or transfer your financial information anywhere.</string>
     <string name="onboarding_next">Next</string>
     <string name="onboarding_start">Start</string>
+    <string name="edit">Edit</string>
 
 
 </resources>

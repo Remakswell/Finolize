@@ -54,6 +54,30 @@ class CategoriesViewModel @Inject constructor(private val repository: ExpenseRep
         }
     }
 
+    fun updateCategory(id: Long, oldName: String, name: String, icon: String, color: String, onSuccess: () -> Unit) {
+        if (isSaving) return
+        val trimmedName = name.trim()
+
+        // Проверка на дубликат только если имя изменилось
+        if (!trimmedName.equals(oldName, ignoreCase = true)) {
+            val exists = categories.value.any { it.name.equals(trimmedName, ignoreCase = true) }
+            if (exists) {
+                nameError = "exists"
+                return
+            }
+        }
+
+        viewModelScope.launch {
+            isSaving = true
+            repository.updateCategory(
+                oldName,
+                CategoryEntity(id = id, name = trimmedName, iconName = icon, colorHex = color)
+            )
+            isSaving = false
+            onSuccess()
+        }
+    }
+
     fun clearError() {
         nameError = null
     }

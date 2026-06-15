@@ -153,13 +153,23 @@ class MainActivity : AppCompatActivity() {
                         navController = navController
                     )
                 }
-                composable("add_category") {
-                    AddCategoryScreen(onNavigateBack = { navController.popBackStack() })
+                composable(
+                    route = "add_category?categoryId={categoryId}",
+                    arguments = listOf(navArgument("categoryId") { type = NavType.LongType; defaultValue = -1L })
+                ) { backStackEntry ->
+                    val categoryId = backStackEntry.arguments?.getLong("categoryId") ?: -1L
+                    AddCategoryScreen(
+                        categoryId = categoryId,
+                        onNavigateBack = { navController.popBackStack() }
+                    )
                 }
                 composable("manage_categories") {
                     ManageCategoriesScreen(
                         onNavigateBack = { navController.popBackStack() },
-                        onNavigateToAddCategory = { navController.navigate("add_category") }
+                        onNavigateToAddCategory = { navController.navigate("add_category")},
+                        onNavigateToEditCategory = { id ->
+                            navController.navigate("add_category?categoryId=$id")
+                        }
                     )
                 }
             }
