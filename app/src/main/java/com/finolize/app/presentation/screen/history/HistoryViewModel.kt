@@ -11,10 +11,17 @@ import com.finolize.app.domain.usecase.GetExpensesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
+data class MonthGroup(
+    val name: String,
+    val totalAmount: Double,
+    val days: Map<String, List<ExpenseEntity>>
+)
+
 data class HistoryUiState(
-    val groupedExpenses: Map<String, List<ExpenseEntity>> = emptyMap(),
+    val groupedExpenses: List<MonthGroup> = emptyList(),
     val categories: List<CategoryEntity> = emptyList(),
     val totalAmount: Double = 0.0,
     val searchQuery: String = "",
@@ -49,12 +56,24 @@ class HistoryViewModel @Inject constructor(
             matchesQuery && matchesCategory
         }
 
+        val monthFormat = java.text.SimpleDateFormat("MMMM yyyy", java.util.Locale.getDefault())
+        val dayFormat = java.text.SimpleDateFormat("d MMMM, EEEE", java.util.Locale.getDefault())
+
+        val grouped = filtered.groupBy {
+            monthFormat.format(Date(it.timestamp))
+        }.map { (monthName, expensesInMonth) ->
+            MonthGroup(
+                name = monthName,
+                totalAmount = expensesInMonth.sumOf { it.amount }, // Сумма за месяц
+                days = expensesInMonth.groupBy {
+                    dayFormat.format(Date(it.timestamp))
+                }
+            )
+        }
+
+
         HistoryUiState(
-            groupedExpenses = filtered.groupBy {
-                // Группируем по месяцам для истории (например "May 2024")
-                val date = java.util.Date(it.timestamp)
-                java.text.SimpleDateFormat("MMMM yyyy", java.util.Locale.getDefault()).format(date)
-            },
+            groupedExpenses = grouped,
             categories = categories,
             totalAmount = filtered.sumOf { it.amount },
             searchQuery = query,

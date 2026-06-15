@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.finolize.app.core.utils.toFormattedDate
+import com.finolize.app.core.utils.toFormattedTimeOnly
 
 @Composable
 fun ExpenseItem(
@@ -85,7 +85,7 @@ fun ExpenseItem(
 
                 // 3. Дата
                 Text(
-                    text = timestamp.toFormattedDate(context),
+                    text = timestamp.toFormattedTimeOnly(),
                     color = Color.Gray,
                     fontSize = 12.sp
                 )

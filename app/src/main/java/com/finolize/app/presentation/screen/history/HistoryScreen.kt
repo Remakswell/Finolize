@@ -1,5 +1,6 @@
 package com.finolize.app.presentation.screen.history
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.finolize.app.R
@@ -27,7 +29,7 @@ import com.finolize.app.presentation.components.DeleteDialog
 import com.finolize.app.presentation.components.ExpenseItem
 import androidx.core.graphics.toColorInt
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HistoryScreen(
     paddingValues: PaddingValues,
@@ -76,48 +78,10 @@ fun HistoryScreen(
             }
         }
 
-        // 5. Сумма транзакций
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
-            ),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = if (state.selectedCategory == null) {
-                        stringResource(R.string.total_history)
-                    } else {
-                        stringResource(R.string.total_for, state.selectedCategory!!)
-                    },
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Text(
-                    text = "${state.currency}${String.format("%.2f", state.totalAmount)}",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Black,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-
         // 5. Список транзакций с группировкой и удалением
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp)
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
             if (state.groupedExpenses.isEmpty()) {
                 item {
@@ -129,67 +93,91 @@ fun HistoryScreen(
                     }
                 }
             } else {
-                state.groupedExpenses.forEach { (month, expenses) ->
-                    item {
-                        Text(
-                            text = month,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(vertical = 12.dp),
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                state.groupedExpenses.forEach { monthGroup ->
+                    stickyHeader(key = monthGroup.name) {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.surfaceVariant
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = monthGroup.name.uppercase(),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    letterSpacing = 1.sp
+                                )
+                                Text(
+                                    text = "${state.currency}${String.format("%.2f", monthGroup.totalAmount)}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    letterSpacing = 1.sp
+                                )
+                            }
+                        }
                     }
 
-                    // Список трат в этом месяце
-                    items(items = expenses, key = { it.id }) { expense ->
-                        val categoryInfo = state.categories.find { it.name == expense.category }
-                        val icon = IconMapper.getIconByName(categoryInfo?.iconName ?: "Category")
-                        val color = categoryInfo?.let {
-                            Color(it.colorHex.toColorInt())
-                        } ?: Color.Gray
-                        val dismissState = rememberSwipeToDismissBoxState(
-                            confirmValueChange = {
-                                if (it == SwipeToDismissBoxValue.EndToStart) {
-                                    expenseToDelete = expense
-                                    false
-                                } else false
-                            }
-                        )
+                    monthGroup.days.forEach { (day, expenses) ->
+                        item {
+                            Text(
+                                text = day,
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            )
+                        }
 
-                        SwipeToDismissBox(
-                            state = dismissState,
-                            enableDismissFromStartToEnd = false,
-                            backgroundContent = {
-                                val color =
-                                    if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart)
-                                        MaterialTheme.colorScheme.errorContainer else Color.Transparent
-                                Box(
-                                    Modifier
-                                        .fillMaxSize()
-                                        .background(color, RoundedCornerShape(12.dp))
-                                        .padding(horizontal = 20.dp),
-                                    contentAlignment = Alignment.CenterEnd
+                        items(items = expenses, key = { it.id }) { expense ->
+                            val categoryInfo = state.categories.find { it.name == expense.category }
+                            val icon = IconMapper.getIconByName(categoryInfo?.iconName ?: "Category")
+                            val color = categoryInfo?.let { Color(it.colorHex.toColorInt()) } ?: Color.Gray
+
+                            val dismissState = rememberSwipeToDismissBoxState(
+                                confirmValueChange = {
+                                    if (it == SwipeToDismissBoxValue.EndToStart) {
+                                        expenseToDelete = expense
+                                        false
+                                    } else false
+                                }
+                            )
+
+                            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                SwipeToDismissBox(
+                                    state = dismissState,
+                                    enableDismissFromStartToEnd = false,
+                                    backgroundContent = {
+                                        val bgColor = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart)
+                                            MaterialTheme.colorScheme.errorContainer else Color.Transparent
+                                        Box(
+                                            Modifier.fillMaxSize().background(bgColor, RoundedCornerShape(12.dp)).padding(horizontal = 20.dp),
+                                            contentAlignment = Alignment.CenterEnd
+                                        ) {
+                                            Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error)
+                                        }
+                                    }
                                 ) {
-                                    Icon(
-                                        Icons.Default.Delete,
-                                        null,
-                                        tint = MaterialTheme.colorScheme.error
+                                    ExpenseItem(
+                                        modifier = Modifier.clickable {
+                                            navController.navigate("add_expense?expenseId=${expense.id}")
+                                        },
+                                        categoryName = expense.category,
+                                        categoryIcon = icon,
+                                        categoryColor = color,
+                                        amount = String.format("%.2f", expense.amount),
+                                        timestamp = expense.timestamp,
+                                        description = expense.description,
+                                        currency = state.currency
                                     )
                                 }
                             }
-                        ) {
-                            ExpenseItem(
-                                modifier = Modifier.clickable {
-                                    navController.navigate("add_expense?expenseId=${expense.id}")
-                                },
-                                categoryName = expense.category,
-                                categoryIcon = icon,
-                                categoryColor = color,
-                                amount = String.format("%.2f", expense.amount),
-                                timestamp = expense.timestamp,
-                                description = expense.description,
-                                currency = state.currency
-                            )
                         }
                     }
                 }
