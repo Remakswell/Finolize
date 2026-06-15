@@ -5,6 +5,7 @@
     <string name="nav_stats">Статистика</string>
     <string name="nav_settings">Налаштування</string>
     <string name="add_expense">Додати витрату</string>
+    <string name="edit_expense">Оновити витрату</string>
     <string name="screen_home">Екран: Головна</string>
     <string name="screen_stats">Екран: Статистика</string>
     <string name="screen_settings">Екран: Налаштування</string>
@@ -29,6 +30,7 @@
     <string name="yesterday">Вчора</string>
     <string name="today_history">Історія за сьогодні</string>
     <string name="new_category">Нова категорія</string>
+    <string name="add_category">Додати категорію</string>
     <string name="edit_category">Оновити категорію</string>
     <string name="category_name">Назва категорії</string>
     <string name="select_icon">Оберіть іконку</string>
@@ -73,6 +75,8 @@
     <string name="onboarding_next">Далі</string>
     <string name="onboarding_start">Почати</string>
     <string name="edit">Оновити</string>
+    <string name="add">Додати</string>
+    <string name="system">Система</string>
 
 
 </resources>

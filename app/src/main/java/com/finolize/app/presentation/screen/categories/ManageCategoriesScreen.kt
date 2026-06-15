@@ -51,7 +51,7 @@ fun ManageCategoriesScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onNavigateToAddCategory) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add))
             }
         }
     ) { padding ->
@@ -110,7 +110,7 @@ fun ManageCategoriesScreen(
                             IconButton(onClick = { categoryToDelete = category }) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
-                                    contentDescription = "Delete",
+                                    contentDescription = stringResource(R.string.delete),
                                     tint = MaterialTheme.colorScheme.error
                                 )
                             }
@@ -118,7 +118,7 @@ fun ManageCategoriesScreen(
                             // Если системная — показываем замочек
                             Icon(
                                 imageVector = Icons.Default.Lock,
-                                contentDescription = "System",
+                                contentDescription = stringResource(R.string.system),
                                 modifier = Modifier
                                     .padding(end = 12.dp)
                                     .size(20.dp),

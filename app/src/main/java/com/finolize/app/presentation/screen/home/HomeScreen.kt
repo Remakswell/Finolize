@@ -167,7 +167,7 @@ fun HomeScreen(
         } else {
             items(items = state.expenses, key = { it.id }) { expense ->
                 val categoryInfo = state.categories.find { it.name == expense.category }
-                val icon = IconMapper.getIconByName(categoryInfo?.iconName ?: "Category")
+                val icon = IconMapper.getIconByName(categoryInfo?.iconName ?: stringResource(R.string.category))
                 val color = categoryInfo?.let { Color(it.colorHex.toColorInt()) } ?: Color.Gray
 
                 val dismissState = rememberSwipeToDismissBoxState(

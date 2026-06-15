@@ -65,7 +65,7 @@ fun AddExpenseScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (viewModel.isEditing) "Edit Expense" else stringResource(R.string.add_expense)) },
+                title = { Text(if (viewModel.isEditing) stringResource(R.string.edit_expense) else stringResource(R.string.add_expense)) },
                 navigationIcon = {
                     IconButton(onClick = {
                         if (!isNavigating) {
@@ -186,7 +186,7 @@ fun AddExpenseScreen(
                     IconButton(onClick = { navController.navigate("add_category") }) {
                         Icon(
                             Icons.Default.AddCircle,
-                            contentDescription = "Add Category",
+                            contentDescription = stringResource(R.string.add_category),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
