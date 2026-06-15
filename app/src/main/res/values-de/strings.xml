@@ -82,4 +82,13 @@
     <string name="edit">Bearbeiten</string>
     <string name="add">Hinzufügen</string>
     <string name="system">System</string>
+    <string name="rate_us">App bewerten</string>
+    <string name="share_app">App teilen</string>
+    <string name="contact_support">Support kontaktieren</string>
+    <string name="about">Über uns</string>
+    <string name="feedback">Feedback</string>
+    <string name="support">Hilfe &amp; Support</string>
+    <string name="privacy_policy">Datenschutzerklärung</string>
+    <string name="share_message">Sieh dir Finolize an: %1$s</string>
+    <string name="feedback_subject">Finolize Feedback (v%1$s)</string>
 </resources>

@@ -1,16 +1,19 @@
 package com.finolize.app.presentation.screen.settings
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -18,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.finolize.app.R
+import androidx.core.net.toUri
 
 @Composable
 fun SettingsScreen(
@@ -26,79 +30,87 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-
-    val currencies = listOf("$", "€", "₴", "₽", "zł", "R$")
-    val languages = listOf(
-        "en" to R.string.lang_en,
-        "ru" to R.string.lang_ru,
-        "uk" to R.string.lang_uk,
-        "es" to R.string.lang_es,
-        "de" to R.string.lang_de,
-        "fr" to R.string.lang_fr,
-        "pt" to R.string.lang_pt,
-        "pl" to R.string.lang_pl,
-    )
+    var showCurrencyDialog by remember { mutableStateOf(false) }
 
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     val versionName = packageInfo.versionName ?: "1.0.0"
+
+    val shareMessage = stringResource(
+        R.string.share_message,
+        "https://play.google.com/store/apps/details?id=${context.packageName}"
+    )
+    val feedbackSubject = stringResource(R.string.feedback_subject, versionName)
+
+    // Вспомогательные функции для действий
+    val rateApp = {
+        val intent = Intent(Intent.ACTION_VIEW, "market://details?id=${context.packageName}".toUri())
+        try {
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            val webIntent = Intent(Intent.ACTION_VIEW,
+                "https://play.google.com/store/apps/details?id=${context.packageName}".toUri())
+            context.startActivity(webIntent)
+        }
+    }
+
+    val shareApp = {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, shareMessage)
+        }
+        context.startActivity(Intent.createChooser(shareIntent, null))
+    }
+
+    val contactSupport = {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:support@finolize.app")
+            putExtra(Intent.EXTRA_SUBJECT, feedbackSubject)
+        }
+        try { context.startActivity(intent) } catch (e: Exception) {}
+    }
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(bottom = 24.dp)
     ) {
-        // 1. Title
         item {
             Text(
                 text = stringResource(R.string.nav_settings),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Black,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
             )
         }
 
-        // 2. Section "GENERAL"
+        // --- GENERAL ---
         item {
-            Text(
-                text = stringResource(R.string.general),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                shape = MaterialTheme.shapes.medium
-            ) {
+            SettingsSectionTitle(stringResource(R.string.general))
+            Card(shape = MaterialTheme.shapes.extraLarge) {
                 Column {
-                    // Item: Categories
-                    ListItem(
-                        headlineContent = { Text(stringResource(R.string.manage_categories)) },
-                        leadingContent = { Icon(Icons.Default.Category, null, tint = MaterialTheme.colorScheme.primary) },
-                        trailingContent = {
-                            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                        },
-                        modifier = Modifier.clickable { onNavigateToManageCategories() }
+                    SettingsMenuItem(
+                        title = stringResource(R.string.manage_categories),
+                        icon = Icons.Default.Category,
+                        onClick = onNavigateToManageCategories
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp)
+                    SettingsMenuItem(
+                        title = stringResource(R.string.currency),
+                        subtitle = getCurrencyName(viewModel.selectedCurrency),
+                        icon = Icons.Default.Payments,
+                        onClick = { showCurrencyDialog = true }
                     )
                 }
             }
         }
 
-        // 3. Section "SECURITY"
+        // --- SECURITY ---
         item {
-            Text(
-                text = stringResource(R.string.security),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                shape = MaterialTheme.shapes.medium
-            ) {
+            SettingsSectionTitle(stringResource(R.string.security))
+            Card(shape = MaterialTheme.shapes.extraLarge) {
                 ListItem(
                     headlineContent = {
                         Text(
@@ -107,17 +119,12 @@ fun SettingsScreen(
                         )
                     },
                     supportingContent = {
-                        Text(
-                            text = if (viewModel.isBiometricHardwareAvailable)
-                                stringResource(R.string.biometric_desc)
-                            else
-                                stringResource(R.string.biometric_enable)
-                        )
+                        Text(text = if (viewModel.isBiometricHardwareAvailable)
+                            stringResource(R.string.biometric_desc) else stringResource(R.string.biometric_enable))
                     },
                     leadingContent = {
                         Icon(
-                            Icons.Default.Fingerprint,
-                            null,
+                            Icons.Default.Fingerprint, null,
                             tint = if (viewModel.isBiometricHardwareAvailable) MaterialTheme.colorScheme.primary else Color.Gray
                         )
                     },
@@ -132,116 +139,140 @@ fun SettingsScreen(
             }
         }
 
-        // 4. Section: Language
+        // --- SUPPORT ---
         item {
-            Text(
-                text = stringResource(R.string.language),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                languages.forEachIndexed { index, (code, nameRes) ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { viewModel.updateLanguage(code) }
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(text = stringResource(nameRes))
-                        RadioButton(
-                            selected = viewModel.selectedLanguage == code,
-                            onClick = { viewModel.updateLanguage(code) }
-                        )
-                    }
-                    if (index < languages.lastIndex) {
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            thickness = 0.5.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant
-                        )
-                    }
+            SettingsSectionTitle(stringResource(R.string.support))
+            Card(shape = MaterialTheme.shapes.extraLarge) {
+                Column {
+                    SettingsMenuItem(
+                        title = stringResource(R.string.rate_us),
+                        icon = Icons.Default.StarRate,
+                        onClick = rateApp
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp)
+                    SettingsMenuItem(
+                        title = stringResource(R.string.share_app),
+                        icon = Icons.Default.Share,
+                        onClick = shareApp
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp)
+                    SettingsMenuItem(
+                        title = stringResource(R.string.contact_support),
+                        icon = Icons.Default.Email,
+                        onClick = contactSupport
+                    )
                 }
             }
         }
 
-
-        // 5. Section: Currency
+        // --- ABOUT ---
         item {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = stringResource(R.string.currency),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                currencies.forEachIndexed { index, currency ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { viewModel.updateCurrency(currency) }
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = when (currency) {
-                                "$" -> "USD ($)"
-                                "€" -> "EUR (€)"
-                                "₴" -> "UAH (₴)"
-                                "₽" -> "RUB (₽)"
-                                "zł" -> "PLN (zł)"
-                                "R$" -> "BRL (R$)"
-                                else -> currency
-                            }
-                        )
-                        RadioButton(
-                            selected = viewModel.selectedCurrency == currency,
-                            onClick = { viewModel.updateCurrency(currency) }
-                        )
-                    }
-                    if (index < currencies.lastIndex) {
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            thickness = 0.5.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant
-                        )
-                    }
-                }
+            SettingsSectionTitle(stringResource(R.string.about))
+            Card(shape = MaterialTheme.shapes.extraLarge) {
+                SettingsMenuItem(
+                    title = stringResource(R.string.privacy_policy),
+                    icon = Icons.Default.Info,
+                    onClick = { /* Открыть URL */ }
+                )
             }
         }
 
+        // Version info
         item {
-            Spacer(modifier = Modifier.height(40.dp))
-
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Gray.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                 )
                 Text(
                     text = "${stringResource(R.string.version)} $versionName",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
                 )
             }
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
+
+    if (showCurrencyDialog) {
+        CurrencyDialog(
+            currentCurrency = viewModel.selectedCurrency,
+            onDismiss = { showCurrencyDialog = false },
+            onSelect = {
+                viewModel.updateCurrency(it)
+                showCurrencyDialog = false
+            }
+        )
+    }
+}
+
+@Composable
+fun SettingsSectionTitle(title: String) {
+    Text(
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
+    )
+}
+
+@Composable
+fun SettingsMenuItem(
+    title: String,
+    subtitle: String? = null,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    onClick: () -> Unit
+) {
+    ListItem(
+        modifier = Modifier.clickable { onClick() },
+        headlineContent = { Text(title) },
+        supportingContent = subtitle?.let { { Text(it) } },
+        leadingContent = { Icon(icon, null, tint = MaterialTheme.colorScheme.primary) },
+        trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant) }
+    )
+}
+
+@Composable
+fun CurrencyDialog(
+    currentCurrency: String,
+    onDismiss: () -> Unit,
+    onSelect: (String) -> Unit
+) {
+    val currencies = listOf("$", "€", "₴", "₽", "zł", "R$")
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.currency)) },
+        text = {
+            Column {
+                currencies.forEach { currency ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onSelect(currency) }
+                            .padding(vertical = 12.dp, horizontal = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(selected = currency == currentCurrency, onClick = { onSelect(currency) })
+                        Spacer(Modifier.width(12.dp))
+                        Text(getCurrencyName(currency))
+                    }
+                }
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } }
+    )
+}
+
+private fun getCurrencyName(code: String) = when (code) {
+    "$" -> "USD ($)"
+    "€" -> "EUR (€)"
+    "₴" -> "UAH (₴)"
+    "₽" -> "RUB (₽)"
+    "zł" -> "PLN (zł)"
+    "R$" -> "BRL (R$)"
+    else -> code
 }

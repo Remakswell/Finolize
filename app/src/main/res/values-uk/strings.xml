@@ -82,6 +82,14 @@
     <string name="edit">Оновити</string>
     <string name="add">Додати</string>
     <string name="system">Система</string>
-
+    <string name="rate_us">Оцінити додаток</string>
+    <string name="share_app">Поділитися додатком</string>
+    <string name="contact_support">Написати в підтримку</string>
+    <string name="about">Про додаток</string>
+    <string name="feedback">Зворотний зв\'язок</string>
+    <string name="support">Підтримка</string>
+    <string name="privacy_policy">Політика конфіденційності</string>
+    <string name="share_message">Подивіться Finolize: %1$s</string>
+    <string name="feedback_subject">Відгук про Finolize (v%1$s)</string>
 
 </resources>

@@ -82,4 +82,13 @@
     <string name="edit">Обновить</string>
     <string name="add">Добавить</string>
     <string name="system">Система</string>
+    <string name="rate_us">Оценить приложение</string>
+    <string name="share_app">Поделиться приложением</string>
+    <string name="contact_support">Написать в поддержку</string>
+    <string name="about">О приложении</string>
+    <string name="feedback">Обратная связь</string>
+    <string name="support">Поддержка</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="share_message">Посмотрите Finolize: %1$s</string>
+    <string name="feedback_subject">Отзыв о Finolize (v%1$s)</string>
 </resources>
