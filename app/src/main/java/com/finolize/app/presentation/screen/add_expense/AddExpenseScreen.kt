@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -165,30 +166,37 @@ fun AddExpenseScreen(
             }
 
             // 4. Select category
-            Text(stringResource(R.string.category), style = MaterialTheme.typography.titleMedium)
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(categories) { category -> // Используем список из базы!
-                    FilterChip(
-                        selected = viewModel.selectedCategoryName == category.name,
-                        onClick = { viewModel.selectedCategoryName = category.name },
-                        label = { Text(category.name) },
-                        leadingIcon = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = stringResource(R.string.category),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(categories) { category ->
+                        FilterChip(
+                            selected = viewModel.selectedCategoryName == category.name,
+                            onClick = { viewModel.selectedCategoryName = category.name },
+                            label = { Text(category.name) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = IconMapper.getIconByName(category.iconName),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp),
+                                    tint = Color(category.colorHex.toColorInt())
+                                )
+                            }
+                        )
+                    }
+                    item {
+                        IconButton(onClick = { navController.navigate("add_category") }) {
                             Icon(
-                                imageVector = IconMapper.getIconByName(category.iconName),
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp),
-                                tint = Color(category.colorHex.toColorInt())
+                                Icons.Default.AddCircle,
+                                contentDescription = stringResource(R.string.add_category),
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
-                    )
-                }
-                item {
-                    IconButton(onClick = { navController.navigate("add_category") }) {
-                        Icon(
-                            Icons.Default.AddCircle,
-                            contentDescription = stringResource(R.string.add_category),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
                     }
                 }
             }

@@ -24,7 +24,7 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="todays_expenses">Today\'s Expenses</string>
-    <string name="no_expenses_today">No expenses today</string>
+    <string name="no_expenses_today">No expenses today. Tap + to add.</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
     <string name="today_history">Today\'s History</string>

@@ -25,7 +25,7 @@
     <string name="delete">Usuń</string>
     <string name="cancel">Anuluj</string>
     <string name="todays_expenses">Dzisiejsze wydatki</string>
-    <string name="no_expenses_today">Brak wydatków dzisiaj</string>
+    <string name="no_expenses_today">Brak wydatków dzisiaj. Dotknij +, aby dodać.</string>
     <string name="today">Dzisiaj</string>
     <string name="yesterday">Wczoraj</string>
     <string name="today_history">Dzisiejsza historia</string>

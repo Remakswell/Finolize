@@ -114,7 +114,8 @@ fun StatsScreen(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
                                     text = stringResource(R.string.total).uppercase(),
-                                    style = MaterialTheme.typography.labelSmall,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     letterSpacing = 1.sp
                                 )

@@ -25,7 +25,7 @@
     <string name="delete">Видалити</string>
     <string name="cancel">Скасувати</string>
     <string name="todays_expenses">Витрати за сьогодні</string>
-    <string name="no_expenses_today">Сьогодні витрат ще немає</string>
+    <string name="no_expenses_today">Сьогодні витрат ще немає. Натисніть +, щоб додати.</string>
     <string name="today">Сьогодні</string>
     <string name="yesterday">Вчора</string>
     <string name="today_history">Історія за сьогодні</string>

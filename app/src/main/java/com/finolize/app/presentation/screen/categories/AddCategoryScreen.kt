@@ -142,7 +142,7 @@ fun AddCategoryScreen(
 
                 Text(
                     text = stringResource(R.string.select_icon),
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
 
@@ -183,7 +183,7 @@ fun AddCategoryScreen(
 
                 Text(
                     text = stringResource(R.string.select_color),
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
 

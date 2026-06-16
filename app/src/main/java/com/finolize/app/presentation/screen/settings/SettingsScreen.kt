@@ -226,10 +226,11 @@ fun SettingsScreen(
 @Composable
 fun SettingsSectionTitle(title: String) {
     Text(
-        text = title.uppercase(),
-        style = MaterialTheme.typography.labelMedium,
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(start = 8.dp, bottom = 8.dp, top = 16.dp)
     )
 }
 
@@ -242,7 +243,12 @@ fun SettingsMenuItem(
 ) {
     ListItem(
         modifier = Modifier.clickable { onClick() },
-        headlineContent = { Text(title) },
+        headlineContent = {
+            Text(
+                text = title,
+                fontWeight = FontWeight.Medium
+            )
+        },
         supportingContent = subtitle?.let { { Text(it) } },
         leadingContent = { Icon(icon, null, tint = MaterialTheme.colorScheme.primary) },
         trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant) }

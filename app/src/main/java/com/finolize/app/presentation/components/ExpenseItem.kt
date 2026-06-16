@@ -78,8 +78,8 @@ fun ExpenseItem(
                         text = description,
                         color = Color.Gray.copy(alpha = 0.8f),
                         fontSize = 14.sp,
-                        maxLines = 1, // Ограничение в одну строку
-                        overflow = TextOverflow.Ellipsis // Три точки в конце
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
