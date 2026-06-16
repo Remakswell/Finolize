@@ -91,5 +91,6 @@
     <string name="privacy_policy">Política de privacidad</string>
     <string name="share_message">Echa un vistazo a Finolize: %1$s</string>
     <string name="feedback_subject">Comentarios de Finolize (v%1$s)</string>
+    <string name="error_no_email_app">No se encontró ninguna aplicación de correo electrónico</string>
 
 </resources>

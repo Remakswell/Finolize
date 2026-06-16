@@ -91,4 +91,5 @@
     <string name="privacy_policy">Polityka prywatności</string>
     <string name="share_message">Sprawdź Finolize: %1$s</string>
     <string name="feedback_subject">Opinia o Finolize (v%1$s)</string>
+    <string name="error_no_email_app">Nie znaleziono aplikacji e-mail</string>
 </resources>

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.finolize.app.R
 import androidx.core.net.toUri
+import android.widget.Toast
 
 @Composable
 fun SettingsScreen(
@@ -32,8 +33,14 @@ fun SettingsScreen(
     val context = LocalContext.current
     var showCurrencyDialog by remember { mutableStateOf(false) }
 
-    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+    val packageInfo = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+        context.packageManager.getPackageInfo(context.packageName, android.content.pm.PackageManager.PackageInfoFlags.of(0))
+    } else {
+        context.packageManager.getPackageInfo(context.packageName, 0)
+    }
     val versionName = packageInfo.versionName ?: "1.0.0"
+
+    val errorNoEmail = stringResource(R.string.error_no_email_app)
 
     val shareMessage = stringResource(
         R.string.share_message,
@@ -41,7 +48,6 @@ fun SettingsScreen(
     )
     val feedbackSubject = stringResource(R.string.feedback_subject, versionName)
 
-    // Вспомогательные функции для действий
     val rateApp = {
         val intent = Intent(Intent.ACTION_VIEW, "market://details?id=${context.packageName}".toUri())
         try {
@@ -63,10 +69,14 @@ fun SettingsScreen(
 
     val contactSupport = {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse("mailto:support@finolize.app")
+            data = "mailto:finolize@gmail.com".toUri()
             putExtra(Intent.EXTRA_SUBJECT, feedbackSubject)
         }
-        try { context.startActivity(intent) } catch (e: Exception) {}
+        try {
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(context, errorNoEmail, Toast.LENGTH_SHORT).show()
+        }
     }
 
     LazyColumn(
@@ -172,7 +182,10 @@ fun SettingsScreen(
                 SettingsMenuItem(
                     title = stringResource(R.string.privacy_policy),
                     icon = Icons.Default.Info,
-                    onClick = { /* Открыть URL */ }
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://sites.google.com/view/finolize-app/privacy"))
+                        context.startActivity(intent)
+                    }
                 )
             }
         }

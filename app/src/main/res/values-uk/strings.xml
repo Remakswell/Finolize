@@ -91,5 +91,6 @@
     <string name="privacy_policy">Політика конфіденційності</string>
     <string name="share_message">Подивіться Finolize: %1$s</string>
     <string name="feedback_subject">Відгук про Finolize (v%1$s)</string>
+    <string name="error_no_email_app">Поштовий додаток не знайдено</string>
 
 </resources>
