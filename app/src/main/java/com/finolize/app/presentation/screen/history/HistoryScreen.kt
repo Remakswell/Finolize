@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.material.icons.filled.Close
 import com.finolize.app.R
 import com.finolize.app.core.utils.IconMapper
 import com.finolize.app.data.local.entity.ExpenseEntity
@@ -60,6 +66,13 @@ fun HistoryScreen(
                 .padding(horizontal = 16.dp),
             placeholder = { Text(stringResource(R.string.search_transactions)) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            trailingIcon = {
+                if (state.searchQuery.isNotEmpty()) {
+                    IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
+                        Icon(Icons.Default.Close, contentDescription = null)
+                    }
+                }
+            },
             shape = RoundedCornerShape(12.dp),
             singleLine = true
         )
@@ -78,9 +91,9 @@ fun HistoryScreen(
             }
         }
 
-        // 5. List of transactions with grouping and deletion
+        // 5. List of transactions
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.weight(1f).fillMaxWidth(),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
             if (state.groupedExpenses.isEmpty()) {
@@ -89,7 +102,21 @@ fun HistoryScreen(
                         modifier = Modifier.fillParentMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = stringResource(R.string.no_records_found), color = Color.Gray)
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ReceiptLong,
+                                contentDescription = null,
+                                modifier = Modifier.size(64.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
+                            )
+                            Spacer(Modifier.height(16.dp))
+                            Text(
+                                text = stringResource(R.string.no_records_found),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             } else {
@@ -135,7 +162,7 @@ fun HistoryScreen(
                             )
                         }
 
-                        items(items = expenses, key = { it.id }) { expense ->
+                        itemsIndexed(items = expenses, key = { _, expense -> expense.id }) { index, expense ->
                             val categoryInfo = state.categories.find { it.name == expense.category }
                             val icon = IconMapper.getIconByName(categoryInfo?.iconName ?: "Category")
                             val color = categoryInfo?.let { Color(it.colorHex.toColorInt()) } ?: Color.Gray
@@ -149,7 +176,9 @@ fun HistoryScreen(
                                 }
                             )
 
-                            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                            Column(modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .animateItem()) {
                                 SwipeToDismissBox(
                                     state = dismissState,
                                     enableDismissFromStartToEnd = false,
@@ -157,7 +186,10 @@ fun HistoryScreen(
                                         val bgColor = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart)
                                             MaterialTheme.colorScheme.errorContainer else Color.Transparent
                                         Box(
-                                            Modifier.fillMaxSize().background(bgColor, RoundedCornerShape(12.dp)).padding(horizontal = 20.dp),
+                                            Modifier
+                                                .fillMaxSize()
+                                                .background(bgColor, RoundedCornerShape(12.dp))
+                                                .padding(horizontal = 20.dp),
                                             contentAlignment = Alignment.CenterEnd
                                         ) {
                                             Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error)
@@ -177,6 +209,14 @@ fun HistoryScreen(
                                         currency = state.currency
                                     )
                                 }
+
+                                if (index < expenses.size - 1) {
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(horizontal = 8.dp),
+                                        thickness = 0.5.dp,
+                                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                                    )
+                                }
                             }
                         }
                     }
@@ -185,13 +225,10 @@ fun HistoryScreen(
         }
     }
 
-    // Delete confirmation dialog
     if (expenseToDelete != null) {
         DeleteDialog(
             onConfirm = {
-                expenseToDelete?.let {
-                    viewModel.deleteExpense(it)
-                }
+                expenseToDelete?.let { viewModel.deleteExpense(it) }
                 expenseToDelete = null
             },
             onDismiss = { expenseToDelete = null })
