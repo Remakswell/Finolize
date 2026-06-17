@@ -87,7 +87,7 @@ fun HomeScreen(
                 Text(
                     text = stringResource(R.string.today_history),
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(vertical = 16.dp)
                 )
             }
@@ -229,14 +229,14 @@ private fun BalanceCard(state: HomeUiState, cardHeight: androidx.compose.ui.unit
                     Text(
                         text = stringResource(R.string.todays_expenses).uppercase(),
                         style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
                         text = "${state.currency}${String.format(Locale.getDefault(), "%.2f", state.totalBalance)}",
                         style = MaterialTheme.typography.displaySmall,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = MaterialTheme.colorScheme.onPrimaryContainer

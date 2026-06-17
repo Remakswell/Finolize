@@ -229,7 +229,7 @@ fun SettingsSectionTitle(title: String) {
         text = title,
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.SemiBold,
         modifier = Modifier.padding(start = 8.dp, bottom = 8.dp, top = 16.dp)
     )
 }
@@ -243,12 +243,7 @@ fun SettingsMenuItem(
 ) {
     ListItem(
         modifier = Modifier.clickable { onClick() },
-        headlineContent = {
-            Text(
-                text = title,
-                fontWeight = FontWeight.Medium
-            )
-        },
+        headlineContent = { Text(text = title) },
         supportingContent = subtitle?.let { { Text(it) } },
         leadingContent = { Icon(icon, null, tint = MaterialTheme.colorScheme.primary) },
         trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant) }

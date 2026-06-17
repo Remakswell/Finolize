@@ -68,15 +68,15 @@ fun ExpenseItem(
                 // 1. Category
                 Text(
                     text = categoryName,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 // 2. Description (show only if it is not empty)
                 if (description.isNotBlank()) {
                     Text(
                         text = description,
-                        color = Color.Gray.copy(alpha = 0.8f),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                         fontSize = 14.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -94,8 +94,8 @@ fun ExpenseItem(
             // Amount
             Text(
                 text = "-$currency$amount",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.error
             )
         }

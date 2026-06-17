@@ -143,7 +143,7 @@ fun AddCategoryScreen(
                 Text(
                     text = stringResource(R.string.select_icon),
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.SemiBold
                 )
 
                 // Grid of icons by Row (4 per row)
@@ -184,7 +184,7 @@ fun AddCategoryScreen(
                 Text(
                     text = stringResource(R.string.select_color),
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.SemiBold
                 )
 
                 // Сетка цветов через Row (по 4 в ряд)

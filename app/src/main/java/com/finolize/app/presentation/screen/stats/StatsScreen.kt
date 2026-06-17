@@ -115,14 +115,14 @@ fun StatsScreen(
                                 Text(
                                     text = stringResource(R.string.total).uppercase(),
                                     style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.Bold,
+                                    fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     letterSpacing = 1.sp
                                 )
                                 Text(
                                     text = "${state.currency}${String.format(Locale.getDefault(), "%.2f", state.totalAmount)}",
                                     style = MaterialTheme.typography.headlineSmall,
-                                    fontWeight = FontWeight.Black
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
                         }
@@ -171,16 +171,15 @@ fun StatItem(stat: com.finolize.app.domain.usecase.CategoryStat, currency: Strin
 
             Text(
                 text = stat.categoryName,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
+                fontSize = 16.sp,
                 modifier = Modifier.weight(1f)
             )
 
             Column(horizontalAlignment = Alignment.End) {
                 Text(
                     text = "${currency}${String.format(Locale.getDefault(), "%.2f", stat.amount)}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
                 )
                 Text(
                     text = "${(stat.percentage * 100).roundToInt()}%",
