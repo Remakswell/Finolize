@@ -9,8 +9,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Savings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -255,7 +255,7 @@ private fun EmptyStateSection() {
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.ReceiptLong,
+            imageVector = Icons.Outlined.Savings,
             contentDescription = null,
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)

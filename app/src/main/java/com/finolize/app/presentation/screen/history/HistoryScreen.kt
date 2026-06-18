@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.automirrored.outlined.ManageSearch
 import com.finolize.app.R
 import com.finolize.app.core.utils.IconMapper
 import com.finolize.app.data.local.entity.ExpenseEntity
@@ -104,7 +104,7 @@ fun HistoryScreen(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ReceiptLong,
+                                imageVector = Icons.AutoMirrored.Outlined.ManageSearch,
                                 contentDescription = null,
                                 modifier = Modifier.size(64.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
