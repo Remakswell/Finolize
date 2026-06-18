@@ -25,7 +25,7 @@
     <string name="delete">Excluir</string>
     <string name="cancel">Cancelar</string>
     <string name="todays_expenses">Despesas de hoje</string>
-    <string name="no_expenses_today">Sem gastos hoje. Toque em + para adicionar.</string>
+    <string name="no_expenses_today">Sem gastos hoje. Toque em + para adicionar</string>
     <string name="today">Hoje</string>
     <string name="yesterday">Ontem</string>
     <string name="today_history">Histórico de hoje</string>
