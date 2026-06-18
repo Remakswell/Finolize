@@ -55,13 +55,13 @@ fun AddCategoryScreen(
         Color(0xFFE91E63),
         Color(0xFF03A9F4),
         Color(0xFF795548),
-        Color(0xFF9E9E9E),
+        Color(0xFF607D8B),
         Color(0xFF009688),
         Color(0xFF8BC34A),
         Color(0xFF3F51B5),
         Color(0xFFCDDC39),
         Color(0xFFFF5722),
-        Color(0xFF333333)
+        Color(0xFF673AB7)
     )
 
     var name by remember { mutableStateOf("") }
