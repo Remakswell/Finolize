@@ -33,17 +33,6 @@ class PreferenceManager @Inject constructor(context: Context) {
         _currencyFlow.value = currency // Оповещаем всех подписчиков!
     }
 
-    fun getLanguage(): String {
-        val systemLang = java.util.Locale.getDefault().language
-        val supportedLangs = listOf("en", "ru", "uk")
-        val defaultLang = if (systemLang in supportedLangs) systemLang else "en"
-        return prefs.getString("selected_language", null) ?: defaultLang
-    }
-
-    fun setLanguage(langCode: String) {
-        prefs.edit { putString("selected_language", langCode) }
-    }
-
     fun isBiometricEnabled(): Boolean = _biometricFlow.value
 
     fun setBiometricEnabled(enabled: Boolean) {
