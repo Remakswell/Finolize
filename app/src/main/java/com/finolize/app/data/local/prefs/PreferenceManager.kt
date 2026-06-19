@@ -14,7 +14,7 @@ class PreferenceManager @Inject constructor(context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("finolize_prefs", Context.MODE_PRIVATE)
 
-    private val _currencyFlow = MutableStateFlow(prefs.getString("selected_currency", "$") ?: "$")
+    private val _currencyFlow = MutableStateFlow(prefs.getString("selected_currency", null) ?: getDefaultCurrencyByLocale())
     val currencyFlow: StateFlow<String> = _currencyFlow
 
     private val _biometricFlow = MutableStateFlow(prefs.getBoolean("biometric_enabled", false))
@@ -38,5 +38,17 @@ class PreferenceManager @Inject constructor(context: Context) {
     fun setBiometricEnabled(enabled: Boolean) {
         prefs.edit { putBoolean("biometric_enabled", enabled) }
         _biometricFlow.value = enabled
+    }
+
+    private fun getDefaultCurrencyByLocale(): String {
+        val locale = java.util.Locale.getDefault()
+        return when (locale.language) {
+            "uk" -> "₴"
+            "ru" -> "₽"
+            "pl" -> "zł"
+            "de", "es", "fr" -> "€"
+            "pt" -> if (locale.country == "BR") "R$" else "€"
+            else -> "$"
+        }
     }
 }
