@@ -27,7 +27,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.finolize.app.R
 import com.finolize.app.presentation.components.PieChart
 import java.util.Locale
-import kotlin.math.roundToInt
 
 @Composable
 fun StatsScreen(
@@ -157,23 +156,27 @@ fun StatItem(stat: com.finolize.app.domain.usecase.CategoryStat, currency: Strin
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
             // Color circle
-            Box(
-                modifier = Modifier
-                    .size(10.dp)
-                    .clip(CircleShape)
-                    .background(stat.color)
-            )
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(10.dp)
+                        .clip(CircleShape)
+                        .background(stat.color)
+                )
 
-            Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
-            Text(
-                text = stat.categoryName,
-                fontSize = 16.sp,
-                modifier = Modifier.weight(1f)
-            )
+                Text(
+                    text = stat.categoryName,
+                    fontSize = 16.sp,
+                )
+            }
 
             Column(horizontalAlignment = Alignment.End) {
                 Text(
@@ -182,7 +185,7 @@ fun StatItem(stat: com.finolize.app.domain.usecase.CategoryStat, currency: Strin
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "${(stat.percentage * 100).roundToInt()}%",
+                    text = String.format(Locale.getDefault(), "%.1f%%", stat.percentage * 100),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

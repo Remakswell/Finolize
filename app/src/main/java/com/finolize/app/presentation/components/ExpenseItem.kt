@@ -49,7 +49,7 @@ fun ExpenseItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 12.dp, horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
             // Category icon
             Box(
@@ -69,7 +69,8 @@ fun ExpenseItem(
                 Text(
                     text = categoryName,
                     fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(top = 2.dp)
                 )
 
                 // 2. Description (show only if it is not empty)
@@ -96,7 +97,8 @@ fun ExpenseItem(
                 text = "-$currency$amount",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.error
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 2.dp)
             )
         }
     }
