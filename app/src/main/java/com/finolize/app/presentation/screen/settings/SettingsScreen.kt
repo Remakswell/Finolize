@@ -40,6 +40,13 @@ fun SettingsScreen(
     }
     val versionName = packageInfo.versionName ?: "1.0.0"
 
+    val versionCode = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+        packageInfo.longVersionCode
+    } else {
+        @Suppress("DEPRECATION")
+        packageInfo.versionCode.toLong()
+    }
+
     val errorNoEmail = stringResource(R.string.error_no_email_app)
 
     val shareMessage = stringResource(
@@ -203,7 +210,7 @@ fun SettingsScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                 )
                 Text(
-                    text = "${stringResource(R.string.version)} $versionName",
+                    text = "${stringResource(R.string.version)} $versionName ($versionCode)",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
                 )
@@ -228,7 +235,6 @@ fun SettingsSectionTitle(title: String) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.SemiBold,
         modifier = Modifier.padding(start = 8.dp, bottom = 8.dp, top = 16.dp)
     )
