@@ -166,36 +166,81 @@ fun AddExpenseScreen(
             }
 
             // 4. Select category
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = stringResource(R.string.category),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(categories) { category ->
-                        FilterChip(
-                            selected = viewModel.selectedCategoryName == category.name,
-                            onClick = { viewModel.selectedCategoryName = category.name },
-                            label = { Text(category.name) },
-                            leadingIcon = {
+            Column {
+                if (viewModel.isCategoriesLoading) {
+                    Spacer(modifier = Modifier.height(48.dp))
+                } else {
+                    val count = categories.size
+                    val isEmpty = count == 0
+                    val isSingle = count == 1
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = when {
+                                isEmpty -> stringResource(R.string.create_category)
+                                isSingle -> stringResource(R.string.category)
+                                else -> stringResource(R.string.select_category)
+                            },
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        if (isEmpty) {
+                            IconButton(onClick = { navController.navigate("add_category") }) {
                                 Icon(
-                                    imageVector = IconMapper.getIconByName(category.iconName),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp),
-                                    tint = Color(category.colorHex.toColorInt())
+                                    Icons.Default.AddCircle,
+                                    contentDescription = stringResource(R.string.add_category),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
-                        )
+                        }
                     }
-                    item {
-                        IconButton(onClick = { navController.navigate("add_category") }) {
-                            Icon(
-                                Icons.Default.AddCircle,
-                                contentDescription = stringResource(R.string.add_category),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
+
+                    if (isEmpty) {
+                        Text(
+                            text = stringResource(R.string.add_first_category_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            contentPadding = PaddingValues(bottom = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            items(categories) { category ->
+                                FilterChip(
+                                    selected = viewModel.selectedCategoryName == category.name,
+                                    onClick = { viewModel.selectedCategoryName = category.name },
+                                    label = { Text(category.name) },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = IconMapper.getIconByName(category.iconName),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp),
+                                            tint = Color(category.colorHex.toColorInt())
+                                        )
+                                    }
+                                )
+                            }
+
+                            item {
+                                IconButton(onClick = { navController.navigate("add_category") }) {
+                                    Icon(
+                                        Icons.Default.AddCircle,
+                                        contentDescription = stringResource(R.string.add_category),
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }

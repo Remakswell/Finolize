@@ -9,8 +9,6 @@ interface ExpenseRepository {
     suspend fun insertExpense(expense: ExpenseEntity)
     suspend fun deleteExpense(expense: ExpenseEntity)
     suspend fun getExpenseById(id: Long): ExpenseEntity?
-
-    suspend fun prefillCategories(context: android.content.Context)
     fun getAllCategories(): Flow<List<CategoryEntity>>
     suspend fun insertCategory(category: CategoryEntity)
     suspend fun deleteCategory(category: CategoryEntity)

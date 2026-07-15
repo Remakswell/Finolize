@@ -9,6 +9,9 @@ import com.finolize.app.domain.usecase.GetExpenseByIdUseCase
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
 import com.finolize.app.data.local.entity.CategoryEntity
 import com.finolize.app.data.local.prefs.PreferenceManager
 import com.finolize.app.domain.repository.ExpenseRepository
@@ -29,11 +32,14 @@ class AddExpenseViewModel @Inject constructor(
 
     var amount by mutableStateOf("")
     var description by mutableStateOf("")
-    var selectedCategoryName by mutableStateOf("General")
+    var isCategoriesLoading by mutableStateOf(true)
+        private set
+    var selectedCategoryName by mutableStateOf("")
     var selectedTimestamp by mutableLongStateOf(System.currentTimeMillis())
     var isEditing by mutableStateOf(false)
     private var editingId: Long? = null
     val categories = repository.getAllCategories()
+        .onEach { isCategoriesLoading = false }
         .map { list ->
             list.sortedWith(compareByDescending<CategoryEntity> { it.isSystem }.thenBy { it.name })
         }
@@ -42,6 +48,19 @@ class AddExpenseViewModel @Inject constructor(
 
     var isSaving by mutableStateOf(false)
         private set
+
+    init {
+        selectCategoryByDefault()
+    }
+
+    fun selectCategoryByDefault() {
+        viewModelScope.launch {
+            val firstNotEmptyList = categories.filter { it.isNotEmpty() }.first()
+            if (!isEditing && selectedCategoryName.isEmpty()) {
+                selectedCategoryName = firstNotEmptyList.first().name
+            }
+        }
+    }
 
     fun loadExpense(id: Long) {
         if (id == -1L || isEditing) return // If you have already downloaded it or the ID is empty

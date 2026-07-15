@@ -19,6 +19,7 @@
     <string name="save">Сохранить</string>
     <string name="enter_amount">Введите сумму</string>
     <string name="category">Категория</string>
+    <string name="select_category">Выберите категорию</string>
     <string name="description">Описание (необязательно)</string>
     <string name="delete_expense_title">Удалить расход?</string>
     <string name="delete_expense_message">Вы уверены, что хотите удалить эту запись?</string>
@@ -29,10 +30,9 @@
     <string name="today">Сегодня</string>
     <string name="yesterday">Вчера</string>
     <string name="today_history">История за сегодня</string>
-    <string name="new_category">Новая категория</string>
     <string name="add_category">Добавить категорию</string>
     <string name="edit_category">Обновить категорию</string>
-    <string name="category_name">Название категории</string>
+    <string name="enter_category_name">Введите название категории</string>
     <string name="select_icon">Выберите иконку</string>
     <string name="select_color">Выберите цвет</string>
     <string name="create_category">Создать категорию</string>
@@ -92,4 +92,7 @@
     <string name="share_message">Посмотрите Finolize: %1$s</string>
     <string name="feedback_subject">Отзыв о Finolize (v%1$s)</string>
     <string name="error_no_email_app">Почтовое приложение не найдено</string>
+    <string name="no_categories">Категорий пока нет</string>
+    <string name="press_plus_to_add_category">Нажмите +, чтобы добавить первую категорию</string>
+    <string name="add_first_category_hint">Нажмите на +, чтобы создать первую категорию</string>
 </resources>

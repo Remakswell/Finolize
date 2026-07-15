@@ -85,7 +85,7 @@ fun AddCategoryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (categoryId == -1L) stringResource(R.string.new_category) else stringResource(R.string.edit_category)) },
+                title = { Text(if (categoryId == -1L) stringResource(R.string.create_category) else stringResource(R.string.edit_category)) },
                 navigationIcon = {
                     IconButton(onClick = {
                         if (!isNavigating) {
@@ -120,7 +120,7 @@ fun AddCategoryScreen(
                             viewModel.clearError()
                         }
                     },
-                    label = { Text(stringResource(R.string.category_name)) },
+                    label = { Text(stringResource(R.string.enter_category_name)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp),
@@ -234,7 +234,13 @@ fun AddCategoryScreen(
                 if (viewModel.isSaving) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
                 } else {
-                    Text(stringResource(R.string.create_category), style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        text = if (categoryId == -1L)
+                            stringResource(R.string.create_category)
+                        else
+                            stringResource(R.string.edit_category),
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             }
         }

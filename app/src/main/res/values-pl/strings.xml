@@ -19,6 +19,7 @@
     <string name="save">Zapisz</string>
     <string name="enter_amount">Wpisz kwotę</string>
     <string name="category">Kategoria</string>
+    <string name="select_category">Wybierz kategorię</string>
     <string name="description">Opis (opcjonalnie)</string>
     <string name="delete_expense_title">Usunąć wydatek?</string>
     <string name="delete_expense_message">Czy na pewno chcesz usunąć ten wpis?</string>
@@ -29,10 +30,9 @@
     <string name="today">Dzisiaj</string>
     <string name="yesterday">Wczoraj</string>
     <string name="today_history">Dzisiejsza historia</string>
-    <string name="new_category">Nowa kategoria</string>
     <string name="add_category">Dodaj kategorię</string>
     <string name="edit_category">Edytuj kategorię</string>
-    <string name="category_name">Nazwa kategorii</string>
+    <string name="enter_category_name">Wpisz nazwę kategorii</string>
     <string name="select_icon">Wybierz ikonę</string>
     <string name="select_color">Wybierz kolor</string>
     <string name="create_category">Utwórz kategorię</string>
@@ -92,4 +92,7 @@
     <string name="share_message">Sprawdź Finolize: %1$s</string>
     <string name="feedback_subject">Opinia o Finolize (v%1$s)</string>
     <string name="error_no_email_app">Nie znaleziono aplikacji e-mail</string>
+    <string name="no_categories">Brak kategorii</string>
+    <string name="press_plus_to_add_category">Naciśnij +, aby dodać pierwszą kategorię</string>
+    <string name="add_first_category_hint">Naciśnij +, aby utworzyć pierwszą kategorię</string>
 </resources>

@@ -69,10 +69,6 @@ class MainActivity : AppCompatActivity() {
                 onError = { finish() }
             )
         }
-
-        lifecycleScope.launch {
-            repository.prefillCategories(applicationContext)
-        }
         enableEdgeToEdge()
         setContent {
             FinolizeTheme {

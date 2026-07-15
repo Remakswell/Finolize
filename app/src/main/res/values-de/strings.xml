@@ -19,6 +19,7 @@
     <string name="save">Speichern</string>
     <string name="enter_amount">Betrag eingeben</string>
     <string name="category">Kategorie</string>
+    <string name="select_category">Kategorie wählen</string>
     <string name="description">Beschreibung (optional)</string>
     <string name="delete_expense_title">Ausgabe löschen?</string>
     <string name="delete_expense_message">Sind Sie sicher, dass Sie diesen Datensatz löschen möchten?</string>
@@ -29,10 +30,9 @@
     <string name="today">Heute</string>
     <string name="yesterday">Gestern</string>
     <string name="today_history">Heutiger Verlauf</string>
-    <string name="new_category">Neue Kategorie</string>
     <string name="add_category">Kategorie hinzufügen</string>
     <string name="edit_category">Kategorie bearbeiten</string>
-    <string name="category_name">Kategoriename</string>
+    <string name="enter_category_name">Kategorienamen eingeben</string>
     <string name="select_icon">Icon auswählen</string>
     <string name="select_color">Farbe auswählen</string>
     <string name="create_category">Kategorie erstellen</string>
@@ -92,4 +92,8 @@
     <string name="share_message">Sieh dir Finolize an: %1$s</string>
     <string name="feedback_subject">Finolize Feedback (v%1$s)</string>
     <string name="error_no_email_app">Keine E-Mail-App gefunden</string>
+    <string name="no_categories">Noch keine Kategorien</string>
+    <string name="press_plus_to_add_category">Drücken Sie +, um Ihre erste Kategorie hinzuzufügen</string>
+    <string name="add_first_category_hint">Drücken Sie +, um Ihre erste Kategorie zu erstellen</string>
+
 </resources>
