@@ -57,29 +57,9 @@ fun HistoryScreen(
             modifier = Modifier.padding(16.dp)
         )
 
-        // 2. Search Field
-        OutlinedTextField(
-            value = state.searchQuery,
-            onValueChange = { viewModel.onSearchQueryChange(it) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            placeholder = { Text(stringResource(R.string.search_transactions)) },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            trailingIcon = {
-                if (state.searchQuery.isNotEmpty()) {
-                    IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
-                        Icon(Icons.Default.Close, contentDescription = null)
-                    }
-                }
-            },
-            shape = RoundedCornerShape(12.dp),
-            singleLine = true
-        )
-
-        // 3. Filter by categories
+        // 2. Filter by categories
         LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(state.categories) { category ->
@@ -91,10 +71,10 @@ fun HistoryScreen(
             }
         }
 
-        // 5. List of transactions
+        // 3. List of transactions
         LazyColumn(
             modifier = Modifier.weight(1f).fillMaxWidth(),
-            contentPadding = PaddingValues(bottom = 16.dp)
+            contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)
         ) {
             if (state.groupedExpenses.isEmpty()) {
                 item {
