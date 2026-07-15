@@ -99,7 +99,7 @@ fun SettingsScreen(
                 text = stringResource(R.string.nav_settings),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Black,
-                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                modifier = Modifier.padding(top = 16.dp)
             )
         }
 
